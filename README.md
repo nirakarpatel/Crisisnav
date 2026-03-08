@@ -38,7 +38,14 @@ Built for enterprises, safety teams, and emergency response units, CrisisNav ens
 
 ---
 
-## 🏃 How to Run Locally
+## � Live Demo
+
+Experience the Crisis Navigation System live:
+**[https://crisisnav.netlify.app/](https://crisisnav.netlify.app/)**
+
+---
+
+## �🏃 How to Run Locally
 
 The project is designed to be lightweight and requires zero installation for the frontend prototype.
 
