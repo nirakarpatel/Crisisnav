@@ -528,9 +528,23 @@ a {
 }
 
 /* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 992px) {
+  .hero__title {
+    font-size: 3rem;
+  }
+
+  .navigator-body {
+    grid-template-columns: 1fr !important;
+  }
+}
+
 @media (max-width: 768px) {
   .hero__nav {
     padding: 20px;
+  }
+
+  .hero__title {
+    font-size: 2.5rem;
   }
 
   .hero__actions {
@@ -538,16 +552,61 @@ a {
     width: 100%;
   }
 
-  .grid-3 {
+  .hero__actions .btn {
+    width: 100%;
+  }
+
+  .grid-3,
+  .features-grid {
     grid-template-columns: 1fr;
   }
 
   .footer-grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 40px;
   }
 
   .dash-sidebar {
     display: none;
   }
+
+  .section-padding {
+    padding: 60px 0;
+  }
+
+  .section-title {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero__title {
+    font-size: 2rem;
+  }
+
+  .hero__subtitle {
+    font-size: 1rem;
+  }
+
+  .glass-card {
+    padding: 20px !important;
+  }
+
+  .container {
+    padding: 0 15px;
+  }
+
+  .navigator-body .step-content {
+    padding: 20px !important;
+  }
+}
+
+/* Fix for mobile height issues */
+.onboarding {
+  padding: 10px;
+  overflow-y: auto;
+}
+
+.onboarding__card {
+  margin: 20px auto;
 }
