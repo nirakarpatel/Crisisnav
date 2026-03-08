@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CrisisNav – Smart Emergency Guidance System</title>
+  <meta name="description"
+    content="Crisis Navigation System – step-by-step emergency guidance for industries and individuals. Transform panic into clear action." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
+
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <!-- ======================== HERO ======================== -->
+  <header class="hero">
+    <div class="hero__bg"></div>
+    <div class="hero__grid"></div>
+    <div class="hero__particles" id="particles-js"></div>
+
+    <nav class="hero__nav">
+      <div class="logo">
+        <i class="ph-bold ph-shield-chevron"></i>
+        <span>CrisisNav</span>
+      </div>
+      <div class="hero__nav-links">
+        <a href="#problem" class="btn btn--sm btn--ghost">Problem</a>
+        <a href="#solution" class="btn btn--sm btn--ghost">Solution</a>
+        <button id="toggle-dashboard" class="btn btn--sm btn--primary">Dashboard</button>
+      </div>
+    </nav>
+
+    <div class="hero__content">
+      <div class="hero__badge">
+        <i class="ph-fill ph-lightning"></i>
+        Professional Emergency Guidance
+      </div>
+      <h1 class="hero__title">
+        Navigate Any Crisis <br />
+        <span class="gradient-text">With Precision</span>
+      </h1>
+      <p class="hero__subtitle">
+        An industry-grade platform that converts complex SOPs into simple, step-by-step actions.
+        Empowering safety teams and enterprises to act with confidence during critical events.
+      </p>
+      <div class="hero__actions">
+        <button id="btn-start-hero" class="btn btn--lg btn--primary">
+          <i class="ph-bold ph-navigation-arrow"></i> Start Guidance
+        </button>
+        <button class="btn btn--lg btn--ghost">
+          <i class="ph-bold ph-play"></i> Watch Demo
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ======================== PROBLEM STATEMENT ======================== -->
+  <section id="problem" class="section-padding">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">The Challenge</span>
+        <h2 class="section-title">Industrial Emergencies are <span class="highlight">Complex</span></h2>
+      </div>
+      <div class="grid-3">
+        <div class="info-card glass-card">
+          <i class="ph-bold ph-warning-octagon"></i>
+          <h3>SOP Confusion</h3>
+          <p>Complex manuals lead to hesitation and errors when seconds count.</p>
+        </div>
+        <div class="info-card glass-card">
+          <i class="ph-bold ph-clipboard-x"></i>
+          <h3>Missed Steps</h3>
+          <p>Crucial reporting and safety protocols are often overlooked during panic.</p>
+        </div>
+        <div class="info-card glass-card">
+          <i class="ph-bold ph-gavel"></i>
+          <h3>Compliance Risk</h3>
+          <p>Improper handling leads to severe legal and financial liabilities.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================== SOLUTION SECTION ======================== -->
+  <section id="solution" class="section-padding bg-secondary">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">The Workflow</span>
+        <h2 class="section-title">From <span class="highlight">Crisis</span> to <span class="highlight">Control</span>
+        </h2>
+      </div>
+      <div class="workflow">
+        <div class="workflow-card glass-card">
+          <div class="workflow-icon"><i class="ph-bold ph-bell-ringing"></i></div>
+          <h4>Detection</h4>
+          <p>Emergency Detected</p>
+        </div>
+        <div class="workflow-card glass-card">
+          <div class="workflow-icon"><i class="ph-bold ph-list-numbers"></i></div>
+          <h4>Classification</h4>
+          <p>Severity Analysis</p>
+        </div>
+        <div class="workflow-card glass-card">
+          <div class="workflow-icon"><i class="ph-bold ph-check-square"></i></div>
+          <h4>Action</h4>
+          <p>Step-by-Step Guidance</p>
+        </div>
+        <div class="workflow-card glass-card">
+          <div class="workflow-icon"><i class="ph-bold ph-activity"></i></div>
+          <h4>Tracking</h4>
+          <p>Real-time Progress</p>
+        </div>
+        <div class="workflow-card glass-card">
+          <div class="workflow-icon"><i class="ph-bold ph-file-text"></i></div>
+          <h4>Logging</h4>
+          <p>Compliance Reports</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================== CORE FEATURES ======================== -->
+  <section id="features" class="section-padding">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">Capabilities</span>
+        <h2 class="section-title">Built for <span class="highlight">Safety Teams</span></h2>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card glass-card">
+          <i class="ph-bold ph-tree-structure"></i>
+          <h3>Decision Tree Engine</h3>
+          <p>Intelligent routing based on specific incident parameters.</p>
+        </div>
+        <div class="feature-card glass-card">
+          <i class="ph-bold ph-gauge"></i>
+          <h3>Severity Classification</h3>
+          <p>Automated risk assessment for faster prioritization.</p>
+        </div>
+        <div class="feature-card glass-card">
+          <i class="ph-bold ph-chart-line-up"></i>
+          <h3>Action Tracking</h3>
+          <p>Monitor every step taken across your organization.</p>
+        </div>
+        <div class="feature-card glass-card">
+          <i class="ph-bold ph-shield-check"></i>
+          <h3>Compliance Logs</h3>
+          <p>Transparent audit trails for legal and insurance needs.</p>
+        </div>
+        <div class="feature-card glass-card">
+          <i class="ph-bold ph-layout"></i>
+          <h3>Industry Dashboard</h3>
+          <p>Unified command center for multi-site monitoring.</p>
+        </div>
+        <div class="feature-card glass-card">
+          <i class="ph-bold ph-device-mobile"></i>
+          <h3>Mobile Crisis Assistant</h3>
+          <p>On-the-go guidance for ground response units.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================== TECH STACK ======================== -->
+  <section class="section-padding bg-secondary">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">Architecture</span>
+        <h2 class="section-title">Modern <span class="highlight">Tech Stack</span></h2>
+      </div>
+      <div class="grid-3" style="text-align: center;">
+        <div class="glass-card padding-20">
+          <h4 class="mb-20">Backend</h4>
+          <div class="badge-grid">
+            <span class="hero__badge">Python</span>
+            <span class="hero__badge">FastAPI</span>
+          </div>
+        </div>
+        <div class="glass-card padding-20">
+          <h4 class="mb-20">Database</h4>
+          <div class="badge-grid">
+            <span class="hero__badge">PostgreSQL</span>
+            <span class="hero__badge">Redis</span>
+          </div>
+        </div>
+        <div class="glass-card padding-20">
+          <h4 class="mb-20">Frontend</h4>
+          <div class="badge-grid">
+            <span class="hero__badge">Vanilla JS</span>
+            <span class="hero__badge">CSS Grid</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================== DASHBOARD PREVIEW ======================== -->
+  <section id="dashboard" class="section-padding">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">Interface</span>
+        <h2 class="section-title">Industry <span class="highlight">Command Center</span></h2>
+      </div>
+      <div class="dashboard-preview glass-card">
+        <aside class="dash-sidebar">
+          <div class="dash-nav-item active"><i class="ph-bold ph-house"></i> Dashboard</div>
+          <div class="dash-nav-item"><i class="ph-bold ph-warning"></i> Active Emergencies</div>
+          <div class="dash-nav-item"><i class="ph-bold ph-books"></i> SOP Library</div>
+          <div class="dash-nav-item"><i class="ph-bold ph-file-text"></i> Reports</div>
+          <div class="dash-nav-item"><i class="ph-bold ph-gear"></i> Settings</div>
+        </aside>
+        <main class="dash-main">
+          <div class="dash-header flex-between mb-40">
+            <h3>Facility Status: <span class="highlight">Secure</span></h3>
+            <div class="hero__badge">Site Alpha-1</div>
+          </div>
+          <div class="dash-stats-grid">
+            <div class="stat-card glass-card pulse-effect">
+              <span class="text-secondary">Active Alerts</span>
+              <h2 class="highlight">0</h2>
+            </div>
+            <div class="stat-card glass-card">
+              <span class="text-secondary">SOP Compliance</span>
+              <h2 class="highlight">98.4%</h2>
+            </div>
+            <div class="stat-card glass-card">
+              <span class="text-secondary">Resource Status</span>
+              <h2 class="highlight">Ready</h2>
+            </div>
+          </div>
+          <!-- Mock Chart UI -->
+          <div class="glass-card padding-40" style="height: 200px; display: flex; align-items: flex-end; gap: 10px;">
+            <div style="flex: 1; height: 40%; background: var(--accent); opacity: 0.3; border-radius: 4px;"></div>
+            <div style="flex: 1; height: 60%; background: var(--accent); opacity: 0.5; border-radius: 4px;"></div>
+            <div style="flex: 1; height: 30%; background: var(--accent); opacity: 0.3; border-radius: 4px;"></div>
+            <div style="flex: 1; height: 80%; background: var(--accent); opacity: 0.8; border-radius: 4px;"></div>
+            <div style="flex: 1; height: 50%; background: var(--accent); opacity: 0.4; border-radius: 4px;"></div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================== FUTURE AI FEATURES ======================== -->
+  <section class="section-padding bg-secondary">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">The Future</span>
+        <h2 class="section-title">Augmented by <span class="highlight">AI</span></h2>
+      </div>
+      <div class="grid-3">
+        <div class="ai-card info-card glass-card">
+          <i class="ph-bold ph-brain"></i>
+          <h3>Crisis Detection</h3>
+          <p>Natural Language processing to detect crises from audio and text feeds.</p>
+        </div>
+        <div class="ai-card info-card glass-card">
+          <i class="ph-bold ph-scan"></i>
+          <h3>SOP Auto-Scanner</h3>
+          <p>Automatically convert paper SOPs into digital step-by-step guides.</p>
+        </div>
+        <div class="ai-card info-card glass-card">
+          <i class="ph-bold ph-sparkles"></i>
+          <h3>Smart Decision AI</h3>
+          <p>AI-driven recommendations based on historical crisis outcomes.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================== FOOTER ======================== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="logo footer-logo">
+            <i class="ph-bold ph-shield-chevron"></i>
+            <span>CrisisNav</span>
+          </div>
+          <p class="footer-text">
+            Transforming panic into clear decisions through intelligent guidance and structured action plans.
+          </p>
+        </div>
+        <div>
+          <h4 class="footer-title">Product</h4>
+          <ul class="footer-links">
+            <li><a href="#">Features</a></li>
+            <li><a href="#">Solutions</a></li>
+            <li><a href="#">Dashboard</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="footer-title">Technology</h4>
+          <ul class="footer-links">
+            <li><a href="#">Mobile App</a></li>
+            <li><a href="#">API Documentation</a></li>
+            <li><a href="#">Security</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="footer-title">Company</h4>
+          <ul class="footer-links">
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">Legal</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Crisis Navigation System. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ======================== CATEGORY SELECTOR (Overlay) ======================== -->
+  <div id="crisis-overlay" class="onboarding" style="display:none;">
+    <div class="onboarding__overlay"></div>
+    <div class="onboarding__card glass-card" style="max-width: 800px; width: 95%;">
+      <div class="flex-between mb-20">
+        <h3>Select Emergency Type</h3>
+        <button id="close-overlay" style="font-size: 2rem;">&times;</button>
+      </div>
+      <div id="crisis-grid" class="features-grid">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== NAVIGATOR (Overlay) ======================== -->
+  <div id="navigator-overlay" class="onboarding" style="display:none;">
+    <div class="onboarding__overlay"></div>
+    <div class="container" style="position:relative; z-index: 10;">
+      <div class="glass-card padding-40">
+        <div class="flex-between mb-30">
+          <div id="nav-crisis-name" class="font-heading" style="font-size: 1.5rem; font-weight: 700;"></div>
+          <div id="nav-severity" class="hero__badge"></div>
+        </div>
+
+        <div class="progress-bar mb-30"
+          style="height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden;">
+          <div id="progress-fill" style="height: 100%; background: var(--accent); width: 0%; transition: width 0.4s;">
+          </div>
+        </div>
+
+        <div class="navigator-body grid-3" style="grid-template-columns: 2fr 1fr;">
+          <div class="step-content glass-card padding-30" style="border-color: rgba(91,192,190,0.3);">
+            <div id="step-num" class="section-label" style="font-size: 0.7rem;">Step 1</div>
+            <h2 id="step-title" class="mb-20"></h2>
+            <p id="step-desc" class="mb-30 text-secondary"></p>
+
+            <div class="flex-center gap-20">
+              <button id="btn-undo" class="btn btn--ghost" disabled>Undo</button>
+              <button id="btn-next" class="btn btn--primary btn--lg">Mark Done & Next</button>
+            </div>
+          </div>
+
+          <div class="action-log-panel glass-card padding-20">
+            <h4 class="mb-20">Action Log</h4>
+            <ul id="action-log" class="footer-links" style="font-size: 0.85rem;">
+              <li class="text-secondary">No actions yet.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="completion-card" style="display:none; text-align: center; padding: 40px 0;">
+          <i class="ph-fill ph-check-circle" style="font-size: 4rem; color: var(--accent); margin-bottom: 20px;"></i>
+          <h2>Crisis Managed Successfully</h2>
+          <p class="mb-30 text-secondary">All SOP steps followed. Action log recorded for compliance.</p>
+          <button id="btn-restart" class="btn btn--primary">Restart</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>
