@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Crisis Navigation System</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .profile-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            padding: 32px 24px 24px;
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 24px;
+            position: relative;
+        }
+        .profile-img-container {
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .profile-img-container:hover {
+            transform: scale(1.05);
+        }
+        .profile-img-container img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #eff6ff;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .upload-icon {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: var(--primary-blue);
+            color: var(--white);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--white);
+            font-size: 16px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: 1px solid #cbd5e1;
+            font-family: var(--font-main);
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            background: #f8fafc;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .form-input:focus {
+            border-color: var(--primary-blue);
+            background: var(--white);
+            box-shadow: 0 0 0 4px #eff6ff;
+        }
+        .save-btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--primary-blue);
+            color: var(--white);
+            border: none;
+            border-radius: 16px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.2);
+            margin-top: 10px;
+        }
+        .save-btn:active {
+            transform: scale(0.98);
+            box-shadow: 0 5px 10px rgba(59, 130, 246, 0.2);
+        }
+        .app-header .header-left .icon-btn {
+            background: #f1f5f9;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <button onclick="window.history.back()" class="icon-btn"><i class="ph-bold ph-arrow-left"></i></button>
+                <h1 class="app-title">My Profile</h1>
+            </div>
+            <div class="header-right">
+                <!-- Keep visually balanced -->
+                <div style="width: 40px;"></div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="app-main">
+            <div class="profile-header">
+                <input type="file" id="file-upload" accept="image/*" style="display: none;">
+                <div class="profile-img-container" id="upload-trigger">
+                    <img id="profile-preview" src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&h=100&fit=crop" alt="Profile">
+                    <div class="upload-icon"><i class="ph-bold ph-camera"></i></div>
+                </div>
+                <div style="text-align: center;">
+                    <h2 id="profile-name-display" style="font-size: 1.25rem; font-weight: 700;">Alex Carter</h2>
+                    <p id="profile-role-display" style="font-size: 0.9rem; color: var(--text-muted);">Floor Safety Warden</p>
+                </div>
+            </div>
+
+            <form id="profile-form" class="steps-section" style="padding: 24px 20px;">
+                <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 24px; display: flex; align-items: center; gap: 8px;">
+                    <i class="ph-bold ph-identification-card" style="color: var(--primary-blue); font-size: 1.2rem;"></i> Personal Details
+                </h3>
+                
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" id="input-name" class="form-input" placeholder="e.g. Alex Carter">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Role / Designation</label>
+                    <input type="text" id="input-role" class="form-input" placeholder="e.g. Floor Safety Warden">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" id="input-email" class="form-input" placeholder="e.g. alex@company.com">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    <input type="tel" id="input-phone" class="form-input" placeholder="e.g. +1 555 123 4567">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Blood Group</label>
+                    <input type="text" id="input-blood" class="form-input" placeholder="e.g. O+">
+                </div>
+                
+                <button type="submit" class="save-btn">
+                    <i class="ph-bold ph-floppy-disk"></i> Save Changes
+                </button>
+            </form>
+        </main>
+
+        <!-- Bottom Tab Bar -->
+        <nav class="app-nav">
+            <button class="nav-item active" onclick="window.location.href='index.html'">
+                <i class="ph-bold ph-house"></i>
+                <span>Home</span>
+            </button>
+            <button class="nav-item" onclick="window.location.href='my-crises.html'">
+                <div class="nav-badge">1</div>
+                <i class="ph-bold ph-briefcase"></i>
+                <span>My Crisis</span>
+            </button>
+            <button id="voice-btn" class="nav-mic-btn">
+                <div class="mic-inner">
+                    <i class="ph-fill ph-microphone"></i>
+                </div>
+            </button>
+            <button class="nav-item" onclick="window.location.href='reports.html'">
+                <i class="ph-bold ph-file-text"></i>
+                <span>Reports</span>
+            </button>
+            <button class="nav-item" onclick="window.location.href='settings.html'">
+                <i class="ph-bold ph-gear"></i>
+                <span>Settings</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Scripts -->
+    <script src="app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const fileUpload = document.getElementById('file-upload');
+            const uploadTrigger = document.getElementById('upload-trigger');
+            const profilePreview = document.getElementById('profile-preview');
+            const profileForm = document.getElementById('profile-form');
+            
+            const inputName = document.getElementById('input-name');
+            const inputRole = document.getElementById('input-role');
+            const inputEmail = document.getElementById('input-email');
+            const inputPhone = document.getElementById('input-phone');
+            const inputBlood = document.getElementById('input-blood');
+            
+            const displayTitle = document.getElementById('profile-name-display');
+            const displayRole = document.getElementById('profile-role-display');
+
+            // Load from localStorage
+            const loadProfileData = () => {
+                const pic = localStorage.getItem('crisisnav_profile_pic');
+                if (pic) profilePreview.src = pic;
+
+                const name = localStorage.getItem('crisisnav_profile_name');
+                if (name) {
+                    inputName.value = name;
+                    displayTitle.textContent = name;
+                }
+
+                const role = localStorage.getItem('crisisnav_profile_role');
+                if (role) {
+                    inputRole.value = role;
+                    displayRole.textContent = role;
+                }
+
+                const email = localStorage.getItem('crisisnav_profile_email');
+                if (email) inputEmail.value = email;
+
+                const phone = localStorage.getItem('crisisnav_profile_phone');
+                if (phone) inputPhone.value = phone;
+
+                const blood = localStorage.getItem('crisisnav_profile_blood');
+                if (blood) inputBlood.value = blood;
+            };
+
+            loadProfileData();
+
+            // Handle image click
+            uploadTrigger.addEventListener('click', () => fileUpload.click());
+
+            // Handle image change
+            fileUpload.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const dataUrl = event.target.result;
+                        profilePreview.src = dataUrl;
+                        localStorage.setItem('crisisnav_profile_pic', dataUrl);
+                        if (typeof loadGlobalProfile === 'function') loadGlobalProfile();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Handle form save
+            profileForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                localStorage.setItem('crisisnav_profile_name', inputName.value);
+                localStorage.setItem('crisisnav_profile_role', inputRole.value);
+                localStorage.setItem('crisisnav_profile_email', inputEmail.value);
+                localStorage.setItem('crisisnav_profile_phone', inputPhone.value);
+                localStorage.setItem('crisisnav_profile_blood', inputBlood.value);
+
+                displayTitle.textContent = inputName.value || 'Anonymous user';
+                displayRole.textContent = inputRole.value || 'No Role';
+                
+                const saveBtn = profileForm.querySelector('.save-btn');
+                const originalText = saveBtn.innerHTML;
+                saveBtn.innerHTML = '<i class="ph-bold ph-check"></i> Saved!';
+                saveBtn.style.background = '#16a34a';
+                if (typeof loadGlobalProfile === 'function') loadGlobalProfile();
+                
+                setTimeout(() => {
+                    saveBtn.innerHTML = originalText;
+                    saveBtn.style.background = 'var(--primary-blue)';
+                }, 2000);
+            });
+        });
+    </script>
+</body>
+</html>
