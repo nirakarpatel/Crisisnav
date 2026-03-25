@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Crisis Navigation System</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .setting-group {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+        }
+        .setting-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .setting-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        .setting-item:first-child {
+            padding-top: 0;
+        }
+        .setting-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .setting-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: #f1f5f9;
+            color: var(--primary-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        .setting-text h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        .setting-text p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            background: #cbd5e1;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .toggle-switch.on {
+            background: var(--primary-blue);
+        }
+        .toggle-knob {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: var(--white);
+            border-radius: 50%;
+            transition: transform 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .toggle-switch.on .toggle-knob {
+            transform: translateX(20px);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <button id="menu-toggle" class="icon-btn"><i class="ph-bold ph-list"></i></button>
+                <h1 class="app-title">Settings</h1>
+            </div>
+            <div class="header-right">
+                <div class="profile-pic">
+                    <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&h=100&fit=crop" alt="Profile">
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="app-main">
+            
+            <!-- Profile Overview -->
+            <div class="setting-group" style="display: flex; align-items: center; gap: 16px; cursor: pointer;" onclick="window.location.href='profile.html'">
+                <div class="profile-pic" style="width: 60px; height: 60px;">
+                    <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&h=100&fit=crop" alt="Profile">
+                </div>
+                <div>
+                    <h2 class="profile-display-name" style="font-size: 1.1rem; font-weight: 700;">Alex Carter</h2>
+                    <p class="profile-display-role" style="font-size: 0.8rem; color: var(--text-muted);">Floor Safety Warden</p>
+                    <p style="font-size: 0.8rem; color: var(--primary-blue); margin-top: 4px; font-weight: 600;">Edit Profile</p>
+                </div>
+            </div>
+
+            <!-- Notifications -->
+            <div class="setting-group">
+                <h3 style="font-size: 0.9rem; font-weight: 700; color: var(--text-muted); margin-bottom: 12px; text-transform: uppercase;">Notifications</h3>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-icon"><i class="ph-bold ph-bell-ringing"></i></div>
+                        <div class="setting-text">
+                            <h4>Push Alerts</h4>
+                            <p>Critical emergency alerts</p>
+                        </div>
+                    </div>
+                    <div class="toggle-switch on"><div class="toggle-knob"></div></div>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-icon"><i class="ph-bold ph-speaker-high"></i></div>
+                        <div class="setting-text">
+                            <h4>Audio Prompts</h4>
+                            <p>Voice-guided instructions</p>
+                        </div>
+                    </div>
+                    <div class="toggle-switch on"><div class="toggle-knob"></div></div>
+                </div>
+            </div>
+
+            <!-- Emergency Contacts -->
+            <div class="setting-group">
+                <h3 style="font-size: 0.9rem; font-weight: 700; color: var(--text-muted); margin-bottom: 12px; text-transform: uppercase;">Emergency Contacts</h3>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-icon" style="background:#fee2e2; color:var(--fire);"><i class="ph-bold ph-user-list"></i></div>
+                        <div class="setting-text">
+                            <h4>Manage Contacts</h4>
+                            <p>3 active contacts synced</p>
+                        </div>
+                    </div>
+                    <button class="icon-btn"><i class="ph-bold ph-caret-right"></i></button>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-icon"><i class="ph-bold ph-map-pin"></i></div>
+                        <div class="setting-text">
+                            <h4>Location Sharing</h4>
+                            <p>Share with contacts during crisis</p>
+                        </div>
+                    </div>
+                    <div class="toggle-switch on"><div class="toggle-knob"></div></div>
+                </div>
+            </div>
+
+            <!-- App Preferences -->
+            <div class="setting-group">
+                <div class="setting-item" style="border-bottom:none">
+                    <div class="setting-info">
+                        <div class="setting-icon" style="background:#eff6ff;"><i class="ph-bold ph-moon"></i></div>
+                        <div class="setting-text">
+                            <h4>Dark Mode</h4>
+                            <p>System default</p>
+                        </div>
+                    </div>
+                    <div class="toggle-switch"><div class="toggle-knob"></div></div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Bottom Tab Bar -->
+        <nav class="app-nav">
+            <button class="nav-item">
+                <i class="ph-bold ph-house"></i>
+                <span>Home</span>
+            </button>
+            <button class="nav-item">
+                <div class="nav-badge">1</div>
+                <i class="ph-bold ph-briefcase"></i>
+                <span>My Crisis</span>
+            </button>
+            <button id="voice-btn" class="nav-mic-btn">
+                <div class="mic-inner">
+                    <i class="ph-fill ph-microphone"></i>
+                </div>
+            </button>
+            <button class="nav-item">
+                <i class="ph-bold ph-file-text"></i>
+                <span>Reports</span>
+            </button>
+            <button class="nav-item active">
+                <i class="ph-fill ph-gear"></i>
+                <span>Settings</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Smart Recommendation Modal (Reused) -->
+    <div id="recommendation-modal" class="modal-overlay">
+        <div class="modal-content glass-card">
+            <div class="modal-header">
+                <div class="ai-badge"><i class="ph-fill ph-sparkles"></i> AI Recommendation</div>
+                <button id="close-recommendation" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h2 id="rec-title">Detected Crisis</h2>
+                <p id="rec-desc">Are you experiencing a situation? Here is the suggested response flow.</p>
+                <div id="rec-suggestion" class="suggestion-box">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-cancel-rec" class="btn-secondary">Ignore</button>
+                <button id="btn-approve-rec" class="btn-primary">Start Flow</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // Simple toggle interactivity for Settings page demo
+        document.querySelectorAll('.toggle-switch').forEach(toggle => {
+            toggle.addEventListener('click', () => {
+                toggle.classList.toggle('on');
+            });
+        });
+    </script>
+</body>
+</html>

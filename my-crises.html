@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Crises - Crisis Navigation System</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <button id="menu-toggle" class="icon-btn"><i class="ph-bold ph-list"></i></button>
+                <h1 class="app-title">My Crises</h1>
+            </div>
+            <div class="header-right">
+                <div class="profile-pic">
+                    <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&h=100&fit=crop" alt="Profile">
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="app-main">
+            <!-- Active Crises -->
+            <section class="activity-section">
+                <div class="section-header">
+                    <h3>Active Emergencies</h3>
+                    <div class="step-count-badge" style="width:24px;height:24px;font-size:0.8rem">1</div>
+                </div>
+                <div class="activity-list">
+                    <div class="activity-item" style="padding: 12px; border: 1px solid #3b82f644; border-radius: 12px; background: #fff; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);">
+                        <div class="activity-icon fire"><i class="ph-fill ph-fire"></i></div>
+                        <div class="activity-content">
+                            <p style="font-size: 1rem; font-weight: 700; margin-bottom: 4px;">Building Fire</p>
+                            <span style="color: var(--fire); font-weight: 600;">Status: Evacuating</span>
+                        </div>
+                        <button class="more-btn"><i class="ph-bold ph-caret-right"></i></button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Past Crises -->
+            <section class="activity-section">
+                <div class="section-header">
+                    <h3>Past Incidents</h3>
+                </div>
+                <div class="activity-list">
+                    <!-- Past Incident 1 -->
+                    <div class="activity-item">
+                        <div class="activity-icon" style="background: var(--medical);"><i class="ph-fill ph-heartbeat"></i></div>
+                        <div class="activity-content">
+                            <p>Medical Emergency - Floor 3</p>
+                            <span>Resolved • Oct 12, 2023</span>
+                        </div>
+                    </div>
+                    <!-- Past Incident 2 -->
+                    <div class="activity-item">
+                        <div class="activity-icon" style="background: var(--chemical);"><i class="ph-fill ph-flask"></i></div>
+                        <div class="activity-content">
+                            <p>Chemical Spill - Lab B</p>
+                            <span>Resolved • Sep 04, 2023</span>
+                        </div>
+                    </div>
+                    <!-- Past Incident 3 -->
+                    <div class="activity-item">
+                        <div class="activity-icon" style="background: var(--accident);"><i class="ph-fill ph-car-profile"></i></div>
+                        <div class="activity-content">
+                            <p>Vehicle Collision - Parking</p>
+                            <span>Resolved • May 22, 2023</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Bottom Tab Bar -->
+        <nav class="app-nav">
+            <button class="nav-item">
+                <i class="ph-bold ph-house"></i>
+                <span>Home</span>
+            </button>
+            <button class="nav-item active">
+                <div class="nav-badge">1</div>
+                <i class="ph-fill ph-briefcase"></i>
+                <span>My Crisis</span>
+            </button>
+            <button id="voice-btn" class="nav-mic-btn">
+                <div class="mic-inner">
+                    <i class="ph-fill ph-microphone"></i>
+                </div>
+            </button>
+            <button class="nav-item">
+                <i class="ph-bold ph-file-text"></i>
+                <span>Reports</span>
+            </button>
+            <button class="nav-item">
+                <i class="ph-bold ph-gear"></i>
+                <span>Settings</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Smart Recommendation Modal (Reused) -->
+    <div id="recommendation-modal" class="modal-overlay">
+        <div class="modal-content glass-card">
+            <div class="modal-header">
+                <div class="ai-badge"><i class="ph-fill ph-sparkles"></i> AI Recommendation</div>
+                <button id="close-recommendation" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h2 id="rec-title">Detected Crisis</h2>
+                <p id="rec-desc">Are you experiencing a situation? Here is the suggested response flow.</p>
+                <div id="rec-suggestion" class="suggestion-box">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-cancel-rec" class="btn-secondary">Ignore</button>
+                <button id="btn-approve-rec" class="btn-primary">Start Flow</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
