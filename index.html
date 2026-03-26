@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crisis Navigation System</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <button id="menu-toggle" class="icon-btn"><i class="ph-bold ph-list"></i></button>
+                <h1 class="app-title">Crisis Navigation System</h1>
+            </div>
+            <div class="header-right">
+                <div class="profile-pic">
+                    <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&h=100&fit=crop" alt="Profile">
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="app-main">
+            <!-- Emergency Advice Banner -->
+            <div class="emergency-banner">
+                <div class="banner-icon"><i class="ph-fill ph-warning-octagon"></i></div>
+                <div class="banner-content">
+                    <h2>Follow the steps during emergency</h2>
+                    <p>Remain calm. Do not skip any steps.</p>
+                </div>
+            </div>
+
+            <!-- Crisis Categories -->
+            <section class="crisis-section">
+                <div class="category-grid" id="category-grid">
+                    <button class="category-btn fire" data-crisis="fire">
+                        <div class="category-icon"><i class="ph-fill ph-fire"></i></div>
+                        <span>Fire</span>
+                    </button>
+                    <button class="category-btn accident" data-crisis="accident">
+                        <div class="category-icon"><i class="ph-fill ph-car"></i></div>
+                        <span>Accident</span>
+                    </button>
+                    <button class="category-btn chemical" data-crisis="chemical">
+                        <div class="category-icon"><i class="ph-fill ph-flask"></i></div>
+                        <span>Chemical Leak</span>
+                    </button>
+                    <button class="category-btn medical" data-crisis="medical">
+                        <div class="category-icon"><i class="ph-fill ph-plus-circle"></i></div>
+                        <span>Medical</span>
+                    </button>
+                </div>
+                <button class="report-other-btn">Report Other Crisis</button>
+            </section>
+
+            <!-- Active Steps Section -->
+            <section class="steps-section" id="active-steps-section">
+                <div class="section-header">
+                    <div class="header-info">
+                        <div class="step-count-badge">5</div>
+                        <div class="header-text">
+                            <h3>Active Steps in Progress</h3>
+                            <p id="current-step-mini">Step 1: verify it when completed</p>
+                        </div>
+                    </div>
+                    <button class="more-btn"><i class="ph-bold ph-dots-three-outline"></i></button>
+                </div>
+
+                <div class="steps-list" id="steps-list">
+                    <!-- Steps will be injected here -->
+                    <div class="step-item active">
+                        <div class="step-status"><i class="ph-fill ph-fire"></i></div>
+                        <div class="step-body">
+                            <h4>1 Sound the alarm & evacuate the area;</h4>
+                            <p>Then call the fire dept..</p>
+                        </div>
+                        <div class="step-check completed"><i class="ph-bold ph-check"></i></div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-status warning"><i class="ph-fill ph-warning-octagon"></i></div>
+                        <div class="step-body">
+                            <h4>2 No injuries? Close the gas valves;</h4>
+                            <p>Use an extinguisher from safe distance</p>
+                        </div>
+                        <div class="step-check"><div class="check-box"></div></div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-status info"><i class="ph-fill ph-drop"></i></div>
+                        <div class="step-body">
+                            <h4>3 Don't use elevators</h4>
+                            <p>Use only the stairs</p>
+                        </div>
+                        <div class="step-check"><div class="check-box"></div></div>
+                    </div>
+                </div>
+
+                <button class="next-step-btn" id="next-step-btn">
+                    <span>Next Step</span>
+                    <i class="ph-bold ph-caret-right"></i>
+                    <small id="next-step-hint">Collect personal protective documents (PPE)</small>
+                </button>
+            </section>
+
+            <!-- Recent Activity -->
+            <section class="activity-section">
+                <div class="section-header">
+                    <h3>Recent Activity</h3>
+                    <i class="ph-bold ph-clock"></i>
+                </div>
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="activity-icon fire"><i class="ph-fill ph-fire"></i></div>
+                        <div class="activity-content">
+                            <p>Sounded alarm & started evacuation</p>
+                            <span>Fire Prevention</span>
+                        </div>
+                        <span class="activity-time">3:22</span>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon fire"><i class="ph-fill ph-phone-call"></i></div>
+                        <div class="activity-content">
+                            <p>Fire reported to the fire department</p>
+                        </div>
+                        <span class="activity-time">3:25</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Bottom Tab Bar -->
+        <nav class="app-nav">
+            <button class="nav-item active">
+                <i class="ph-fill ph-house"></i>
+                <span>Home</span>
+            </button>
+            <button class="nav-item">
+                <div class="nav-badge">5</div>
+                <i class="ph-bold ph-briefcase"></i>
+                <span>My Crisis</span>
+            </button>
+            <button id="voice-btn" class="nav-mic-btn">
+                <div class="mic-inner">
+                    <i class="ph-fill ph-microphone"></i>
+                </div>
+            </button>
+            <button class="nav-item">
+                <i class="ph-bold ph-file-text"></i>
+                <span>Reports</span>
+            </button>
+            <button class="nav-item">
+                <i class="ph-bold ph-gear"></i>
+                <span>Settings</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Smart Recommendation Modal -->
+    <div id="recommendation-modal" class="modal-overlay">
+        <div class="modal-content glass-card">
+            <div class="modal-header">
+                <div class="ai-badge"><i class="ph-fill ph-sparkles"></i> AI Recommendation</div>
+                <button id="close-recommendation" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h2 id="rec-title">Detected Crisis</h2>
+                <p id="rec-desc">Are you experiencing a situation? Here is the suggested response flow.</p>
+                <div id="rec-suggestion" class="suggestion-box">
+                    <!-- Suggestion content -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-cancel-rec" class="btn-secondary">Ignore</button>
+                <button id="btn-approve-rec" class="btn-primary">Start Flow</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="app.js"></script>
+</body>
+</html>
