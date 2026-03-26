@@ -35,23 +35,27 @@ async function init() {
     try {
         const response = await fetch('/api/crises');
         state.crises = await response.json();
-        renderCategories();
-        
-        // Start with fire by default for the demo
-        startCrisis('fire');
+        if (dom.categoryGrid) {
+            renderCategories();
+            startCrisis('fire'); // Start with fire by default for the demo
+        }
     } catch (error) {
         console.error('Failed to fetch crisis data:', error);
         // Fallback for direct file opening
         state.crises = mockData;
-        renderCategories();
-        startCrisis('fire');
+        if (dom.categoryGrid) {
+            renderCategories();
+            startCrisis('fire');
+        }
     }
     
     initEvents();
+    loadGlobalProfile();
 }
 
 // ── Render Categories ──────────────────────────────────────
 function renderCategories() {
+    if (!dom.categoryGrid) return;
     dom.categoryGrid.innerHTML = state.crises.map(c => `
         <button class="category-btn ${c.id}" data-crisis="${c.id}">
             <div class="category-icon"><i class="${c.icon}"></i></div>
@@ -78,6 +82,7 @@ function startCrisis(id) {
 
 // ── Update UI ──────────────────────────────────────────────
 function updateUI() {
+    if (!dom.stepCountBadge || !state.activeCrisis) return;
     const crisis = state.activeCrisis;
     const step = crisis.steps[state.currentStep];
     
@@ -98,6 +103,7 @@ function updateUI() {
 
 // ── Render Steps ───────────────────────────────────────────
 function renderSteps() {
+    if (!dom.stepsList || !state.activeCrisis) return;
     const crisis = state.activeCrisis;
     
     dom.stepsList.innerHTML = crisis.steps.map((s, index) => {
@@ -205,27 +211,44 @@ function showSmartRecommendation(crisisId) {
 
 // ── Event Handlers ─────────────────────────────────────────
 function initEvents() {
-    dom.nextStepBtn.addEventListener('click', () => {
-        if (state.currentStep < state.activeCrisis.steps.length - 1) {
-            state.currentStep++;
-            updateUI();
-        } else {
-            alert('Emergency Protocol Successfully Completed!');
-        }
-    });
+    if (dom.nextStepBtn) {
+        dom.nextStepBtn.addEventListener('click', () => {
+            if (state.currentStep < state.activeCrisis.steps.length - 1) {
+                state.currentStep++;
+                updateUI();
+            } else {
+                alert('Emergency Protocol Successfully Completed!');
+            }
+        });
+    }
 
     // Voice button
-    dom.voiceBtn.addEventListener('click', () => {
-        if (recognition) {
-            recognition.start();
-        } else {
-            alert('Speech Recognition is not supported in this browser.');
-        }
-    });
+    if (dom.voiceBtn) {
+        dom.voiceBtn.addEventListener('click', () => {
+            if (recognition) {
+                recognition.start();
+            } else {
+                alert('Speech Recognition is not supported in this browser.');
+            }
+        });
+    }
 
     // Modal close
     [dom.btnCancelRec, dom.btnCloseRec].forEach(btn => {
-        btn.addEventListener('click', () => dom.recModal.classList.remove('active'));
+        if (btn && dom.recModal) {
+            btn.addEventListener('click', () => dom.recModal.classList.remove('active'));
+        }
+    });
+
+    // Navigation Events
+    document.querySelectorAll('.app-nav .nav-item').forEach(navBtn => {
+        navBtn.addEventListener('click', (e) => {
+            const spanText = navBtn.querySelector('span')?.textContent.trim();
+            if (spanText === 'Home') window.location.href = 'index.html';
+            else if (spanText === 'My Crisis') window.location.href = 'my-crises.html';
+            else if (spanText === 'Reports') window.location.href = 'reports.html';
+            else if (spanText === 'Settings') window.location.href = 'settings.html';
+        });
     });
 }
 
@@ -242,6 +265,41 @@ const mockData = [
     ]
   }
 ];
+
+// ── Global Profile ─────────────────────────────────────────
+function loadGlobalProfile() {
+    // Load Photo
+    const savedPic = localStorage.getItem('crisisnav_profile_pic');
+    if (savedPic) {
+        document.querySelectorAll('.profile-pic img').forEach(img => {
+            img.src = savedPic;
+        });
+    }
+
+    // Load Name
+    const savedName = localStorage.getItem('crisisnav_profile_name');
+    if (savedName) {
+        document.querySelectorAll('.profile-display-name').forEach(el => {
+            el.textContent = savedName;
+        });
+    }
+
+    // Load Role
+    const savedRole = localStorage.getItem('crisisnav_profile_role');
+    if (savedRole) {
+        document.querySelectorAll('.profile-display-role').forEach(el => {
+            el.textContent = savedRole;
+        });
+    }
+
+    // Make profile pics navigate to profile.html
+    document.querySelectorAll('.profile-pic').forEach(pic => {
+        pic.style.cursor = 'pointer';
+        pic.onclick = () => {
+            window.location.href = 'profile.html';
+        };
+    });
+}
 
 // Start the app
 init();
