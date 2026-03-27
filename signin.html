@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +8,9 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap"
+        rel="stylesheet">
     <!-- Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
     <link rel="stylesheet" href="style.css">
@@ -16,6 +19,7 @@
             position: relative;
             background: linear-gradient(135deg, #f0f4ff 0%, #ffffff 100%);
         }
+
         .decorator {
             position: absolute;
             border-radius: 50%;
@@ -23,6 +27,7 @@
             z-index: 0;
             pointer-events: none;
         }
+
         .decorator-1 {
             width: 250px;
             height: 250px;
@@ -30,6 +35,7 @@
             top: -50px;
             left: -50px;
         }
+
         .decorator-2 {
             width: 300px;
             height: 300px;
@@ -37,6 +43,7 @@
             bottom: -50px;
             right: -50px;
         }
+
         .auth-container {
             flex: 1;
             display: flex;
@@ -46,16 +53,18 @@
             position: relative;
             z-index: 1;
         }
+
         .auth-card {
             background: rgba(255, 255, 255, 0.7);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             padding: 40px 24px;
             border-radius: 28px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255,255,255,0.6);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.6);
             border: 1px solid rgba(255, 255, 255, 0.8);
             text-align: center;
         }
+
         .auth-logo {
             width: 72px;
             height: 72px;
@@ -69,6 +78,7 @@
             margin: 0 auto 20px;
             box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
         }
+
         .auth-title {
             font-family: var(--font-heading);
             font-size: 1.8rem;
@@ -76,33 +86,39 @@
             margin-bottom: 8px;
             color: var(--text-dark);
         }
+
         .auth-subtitle {
             color: var(--text-muted);
             font-size: 0.95rem;
             margin-bottom: 40px;
         }
+
         .auth-form {
             display: flex;
             flex-direction: column;
             gap: 20px;
             text-align: left;
         }
+
         .input-group {
             display: flex;
             flex-direction: column;
             gap: 8px;
         }
+
         .input-group label {
             font-size: 0.85rem;
             font-weight: 600;
             color: var(--text-dark);
             margin-left: 4px;
         }
+
         .input-wrapper {
             position: relative;
             display: flex;
             align-items: center;
         }
+
         .input-wrapper i.icon-left {
             position: absolute;
             left: 16px;
@@ -111,6 +127,7 @@
             transition: color 0.3s ease;
             pointer-events: none;
         }
+
         .input-wrapper input {
             width: 100%;
             padding: 16px 16px 16px 48px;
@@ -123,11 +140,13 @@
             transition: all 0.3s ease;
             font-family: var(--font-main);
         }
+
         .input-wrapper:focus-within input {
             border-color: var(--primary-blue);
             box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
             background: var(--white);
         }
+
         .input-wrapper:focus-within i.icon-left {
             color: var(--primary-blue);
         }
@@ -146,21 +165,25 @@
             margin-top: 8px;
             transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+
         .auth-submit-btn:active {
             transform: scale(0.97);
             box-shadow: 0 5px 10px rgba(59, 130, 246, 0.3);
         }
+
         .auth-links {
             margin-top: 28px;
             font-size: 0.95rem;
             color: var(--text-muted);
         }
+
         .auth-links a {
             color: var(--primary-blue);
             font-weight: 600;
             text-decoration: none;
             position: relative;
         }
+
         .auth-links a::after {
             content: '';
             position: absolute;
@@ -173,12 +196,14 @@
             transition: transform 0.3s ease;
             transform-origin: right;
         }
+
         .auth-links a:hover::after {
             transform: scaleX(1);
             transform-origin: left;
         }
     </style>
 </head>
+
 <body>
     <div class="app-container">
         <!-- Decorative Background Entities -->
@@ -198,7 +223,7 @@
                 <div class="auth-logo"><i class="ph-fill ph-shield-check"></i></div>
                 <h1 class="auth-title">Welcome Back</h1>
                 <p class="auth-subtitle">Sign in to access your dashboard</p>
-                
+
                 <form class="auth-form" id="signin-form">
                     <div class="input-group">
                         <label>Email ID</label>
@@ -234,4 +259,5 @@
         });
     </script>
 </body>
+
 </html>
