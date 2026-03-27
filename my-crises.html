@@ -13,6 +13,33 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="menu-overlay" id="menu-overlay"></div>
+    <div class="side-menu" id="side-menu">
+        <div class="menu-header">
+            <div class="menu-logo">
+                <i class="ph-fill ph-shield-check"></i>
+                <h2>CrisisNav</h2>
+            </div>
+        </div>
+        <div class="menu-links">
+            <a href="index.html" class="menu-link"><i class="ph-bold ph-house"></i> Home</a>
+            <a href="my-crises.html" class="menu-link active"><i class="ph-bold ph-briefcase"></i> My Crises</a>
+            <a href="reports.html" class="menu-link"><i class="ph-bold ph-file-text"></i> Reports</a>
+            <a href="settings.html" class="menu-link"><i class="ph-bold ph-gear"></i> Settings</a>
+            <a href="profile.html" class="menu-link"><i class="ph-bold ph-user-circle"></i> Profile</a>
+        </div>
+        <div class="menu-recent-activity">
+            <h3>Recent System Activity</h3>
+            <div id="sidebar-activity-list" class="sidebar-activity-list">
+                <!-- Activities will be injected here by JS -->
+                <div class="sidebar-activity-placeholder">No activities recorded in this session</div>
+            </div>
+        </div>
+        <div class="menu-footer">
+            <a href="#" class="logout-btn"><i class="ph-bold ph-sign-out"></i> Log Out</a>
+        </div>
+    </div>
+
     <div class="app-container">
         <!-- Header -->
         <header class="app-header">

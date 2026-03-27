@@ -7,7 +7,8 @@ let state = {
     crises: [],
     activeCrisis: null,
     currentStep: 0,
-    actionLogs: []
+    actionLogs: [],
+    protocolCompleted: false
 };
 
 // ── DOM Elements ───────────────────────────────────────────
@@ -27,7 +28,15 @@ const dom = {
     recSuggestion: document.getElementById('rec-suggestion'),
     btnApproveRec: document.getElementById('btn-approve-rec'),
     btnCancelRec: document.getElementById('btn-cancel-rec'),
-    btnCloseRec: document.getElementById('close-recommendation')
+    btnCloseRec: document.getElementById('close-recommendation'),
+    // Navigation
+    navItems: document.querySelectorAll('.nav-item'),
+    profilePic: document.querySelector('.profile-pic'),
+    menuToggle: document.getElementById('menu-toggle'),
+    sideMenu: document.getElementById('side-menu'),
+    menuOverlay: document.getElementById('menu-overlay'),
+    themeToggle: document.getElementById('theme-toggle-btn'),
+    crisisSearch: document.getElementById('crisis-search')
 };
 
 // ── Initialization ─────────────────────────────────────────
@@ -50,7 +59,33 @@ async function init() {
     }
     
     initEvents();
+    initNavigation();
+    initMenu();
+    initTheme();
     loadGlobalProfile();
+}
+
+// ── Theme Management ──────────────────────────────────────
+function initTheme() {
+    const savedTheme = localStorage.getItem('crisisnav_theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    
+    if (dom.themeToggle) {
+        if (savedTheme === 'dark') dom.themeToggle.classList.add('on');
+        dom.themeToggle.addEventListener('click', toggleTheme);
+    }
+}
+
+function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('crisisnav_theme', newTheme);
+    
+    if (dom.themeToggle) {
+        dom.themeToggle.classList.toggle('on');
+    }
 }
 
 // ── Render Categories ──────────────────────────────────────
@@ -72,11 +107,28 @@ function renderCategories() {
 function startCrisis(id) {
     const crisis = state.crises.find(c => c.id === id);
     if (!crisis) return;
-    
+
+    // Check if the previous crisis was completed
+    if (state.activeCrisis && !state.protocolCompleted) {
+        logActivity(`${state.activeCrisis.title}: steps not completed`, 'ph-fill ph-warning-octagon', 'warning');
+    }
+
     state.activeCrisis = crisis;
     state.currentStep = 0;
     state.actionLogs = [];
+    state.protocolCompleted = false;
     
+    logActivity(`${crisis.title} started`, crisis.icon, crisis.id);
+    
+    // Add staggered class for automated entrance
+    if (dom.stepsList) {
+        dom.stepsList.classList.add('staggered');
+        // Remove after animation completes to avoid re-triggering on every step update
+        setTimeout(() => {
+            dom.stepsList.classList.remove('staggered');
+        }, crisis.steps.length * 150 + 500);
+    }
+
     updateUI();
 }
 
@@ -87,54 +139,62 @@ function updateUI() {
     const step = crisis.steps[state.currentStep];
     
     // Update labels
-    dom.stepCountBadge.textContent = crisis.steps.length;
-    dom.currentStepMini.textContent = `Step ${state.currentStep + 1}: ${step.title}`;
+    if (dom.stepCountBadge) dom.stepCountBadge.textContent = crisis.steps.length;
+    if (dom.currentStepMini) dom.currentStepMini.textContent = `Step ${state.currentStep + 1}: ${step.title}`;
     
     // Update Next Step Button
-    if (state.currentStep < crisis.steps.length - 1) {
-        dom.nextStepBtn.style.display = 'flex';
-        dom.nextStepHint.textContent = crisis.steps[state.currentStep + 1].title;
-    } else {
-        dom.nextStepBtn.innerHTML = '<span>Protocol Complete</span> <i class="ph-bold ph-check"></i>';
+    if (dom.nextStepBtn) {
+        if (state.currentStep < crisis.steps.length - 1) {
+            dom.nextStepBtn.style.display = 'flex';
+            if (dom.nextStepHint) dom.nextStepHint.textContent = crisis.steps[state.currentStep + 1].title;
+        } else {
+            dom.nextStepBtn.innerHTML = '<span>Protocol Complete</span> <i class="ph-bold ph-check"></i>';
+        }
     }
     
     renderSteps();
 }
 
-// ── Render Steps ───────────────────────────────────────────
+// ── Render Steps (Single Card Display) ──────────────────────
 function renderSteps() {
     if (!dom.stepsList || !state.activeCrisis) return;
     const crisis = state.activeCrisis;
+    const currentStepIndex = state.currentStep;
+    const step = crisis.steps[currentStepIndex];
     
-    dom.stepsList.innerHTML = crisis.steps.map((s, index) => {
-        let statusClass = '';
-        let iconClass = crisis.icon;
-        
-        if (index < state.currentStep) {
-            statusClass = 'completed';
-        } else if (index === state.currentStep) {
-            statusClass = 'active';
-        }
-        
-        // Custom icons based on step index for visual variety like in the image
-        if (index === 1) iconClass = 'ph-fill ph-warning-octagon';
-        if (index === 2) iconClass = 'ph-fill ph-drop';
-        
-        return `
-            <div class="step-item ${statusClass}">
-                <div class="step-status ${index === 1 ? 'warning' : index === 2 ? 'info' : ''}">
-                    <i class="${iconClass}"></i>
-                </div>
-                <div class="step-body">
-                    <h4>${index + 1} ${s.title}</h4>
-                    <p>${s.desc}</p>
-                </div>
-                <div class="step-check ${index < state.currentStep ? 'completed' : ''}">
-                    ${index < state.currentStep ? '<i class="ph-bold ph-check"></i>' : '<div class="check-box"></div>'}
-                </div>
+    // Create progress dots
+    const dotsHtml = crisis.steps.map((_, i) => `
+        <div class="progress-dot ${i === currentStepIndex ? 'active' : ''}"></div>
+    `).join('');
+
+    let typeClass = '';
+    let iconClass = crisis.icon;
+    
+    // Pattern match icons for variety like original version
+    if (currentStepIndex === 1) { 
+        iconClass = 'ph-fill ph-warning-octagon';
+        typeClass = 'warning';
+    } else if (currentStepIndex === 2) {
+        iconClass = 'ph-fill ph-drop';
+        typeClass = 'info';
+    } else if (crisis.id === 'fire') {
+        typeClass = 'fire';
+    }
+
+    dom.stepsList.innerHTML = `
+        <div class="step-progress-dots">
+            ${dotsHtml}
+        </div>
+        <div class="step-card active">
+            <div class="step-card-icon ${typeClass}">
+                <i class="${iconClass}"></i>
             </div>
-        `;
-    }).join('');
+            <div class="step-card-body">
+                <h3>${currentStepIndex + 1}. ${step.title}</h3>
+                <p>${step.desc}</p>
+            </div>
+        </div>
+    `;
 }
 
 // ── Voice Recognition ──────────────────────────────────────
@@ -209,14 +269,39 @@ function showSmartRecommendation(crisisId) {
     };
 }
 
+// ── Search Logic ───────────────────────────────────────────
+function handleSearch() {
+    if (!dom.crisisSearch) return;
+    const query = dom.crisisSearch.value.toLowerCase();
+    const categories = document.querySelectorAll('.category-btn');
+    
+    categories.forEach(btn => {
+        const title = btn.querySelector('span').textContent.toLowerCase();
+        if (title.includes(query)) {
+            btn.style.display = 'flex';
+        } else {
+            btn.style.display = 'none';
+        }
+    });
+}
+
 // ── Event Handlers ─────────────────────────────────────────
 function initEvents() {
+    // Search functionality
+    if (dom.crisisSearch) {
+        dom.crisisSearch.addEventListener('input', handleSearch);
+    }
+    
     if (dom.nextStepBtn) {
         dom.nextStepBtn.addEventListener('click', () => {
             if (state.currentStep < state.activeCrisis.steps.length - 1) {
                 state.currentStep++;
+                logActivity(`Step ${state.currentStep} completed`, 'ph-bold ph-check-circle', 'info');
                 updateUI();
             } else {
+                state.protocolCompleted = true;
+                logActivity('Emergency protocol completed', 'ph-bold ph-crown', 'info');
+                logHistory(`${state.activeCrisis.title} completed`, 'ph-bold ph-check-circle', 'success');
                 alert('Emergency Protocol Successfully Completed!');
             }
         });
@@ -234,7 +319,7 @@ function initEvents() {
     }
 
     // Modal close
-    [dom.btnCancelRec, dom.btnCloseRec].forEach(btn => {
+    [dom.btnApproveRec, dom.btnCancelRec, dom.btnCloseRec].forEach(btn => {
         if (btn && dom.recModal) {
             btn.addEventListener('click', () => dom.recModal.classList.remove('active'));
         }
@@ -252,16 +337,99 @@ function initEvents() {
     });
 }
 
+
+// ── Navigation Logic ───────────────────────────────────────
+function initNavigation() {
+    dom.navItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const label = item.querySelector('span').textContent.toLowerCase().trim();
+            if (label === 'home') window.location.href = 'index.html';
+            if (label === 'my crisis') window.location.href = 'my-crises.html';
+            if (label === 'reports') window.location.href = 'reports.html';
+            if (label === 'settings') window.location.href = 'settings.html';
+        });
+    });
+
+    if (dom.profilePic) {
+        dom.profilePic.style.cursor = 'pointer';
+        dom.profilePic.addEventListener('click', () => {
+            window.location.href = 'profile.html';
+        });
+    }
+}
+
+// ── Side Menu Logic ────────────────────────────────────────
+function initMenu() {
+    if (!dom.menuToggle) return;
+
+    dom.menuToggle.addEventListener('click', () => {
+        document.body.classList.toggle('menu-open');
+    });
+
+    if (dom.menuOverlay) {
+        dom.menuOverlay.addEventListener('click', () => {
+            document.body.classList.remove('menu-open');
+        });
+    }
+}
+
+
 // ── Mock Data Fallback ─────────────────────────────────────
 const mockData = [
   {
     id: 'fire',
     title: 'Fire Incident',
     icon: 'ph-fill ph-fire',
+    desc: 'If you see smoke or fire.',
+    severity: 'critical',
+    accentColor: '#f43f5e',
     steps: [
-      { title: 'Sound the alarm & evacuate the area;', desc: 'Then call the fire dept..' },
-      { title: 'No injuries? Close the gas valves;', desc: 'Use an extinguisher from safe distance' },
-      { title: 'Don\'t use elevators', desc: 'Use only the stairs' }
+      { title: 'Pull the Alarm', desc: 'Find the red box on the wall and pull the handle down hard.' },
+      { title: 'Call for Help', desc: 'Call 911. Tell them your name and where the fire is.' },
+      { title: 'Get Out Fast', desc: 'Walk quickly to the nearest door. Don\'t stop to pick up your things.' },
+      { title: 'Meet at the Tree', desc: 'Go to the safe spot outside where everyone meets and stay there.' }
+    ]
+  },
+  {
+    id: 'accident',
+    title: 'Workplace Accident',
+    icon: 'ph-fill ph-warning-octagon',
+    desc: 'If someone gets hurt or something breaks.',
+    severity: 'high',
+    accentColor: '#f59e0b',
+    steps: [
+      { title: 'Stop Everything', desc: 'Push the big red "STOP" button on the machine right away.' },
+      { title: 'Tell a Grown-up', desc: 'Run and find a teacher or boss and tell them someone is hurt.' },
+      { title: 'Stay Back', desc: 'Keep away from the broken machine so you don\'t get hurt too.' },
+      { title: 'Wait for the Doctor', desc: 'Stay calm and wait for the ambulance to arrive.' }
+    ]
+  },
+  {
+    id: 'chemical',
+    title: 'Chemical Leak',
+    icon: 'ph-fill ph-flask',
+    desc: 'If something smelly or sticky spills.',
+    severity: 'critical',
+    accentColor: '#8b5cf6',
+    steps: [
+      { title: 'Don\'t Touch It', desc: 'Stay away from the spill. Don\'t smell it or touch it!' },
+      { title: 'Cover Your Nose', desc: 'Use your shirt or a mask to cover your mouth and nose.' },
+      { title: 'Leave the Room', desc: 'Go outside where the air is fresh. Close the door behind you.' },
+      { title: 'Wash Your Hands', desc: 'If anything touched your skin, wash it with lots of water.' }
+    ]
+  },
+  {
+    id: 'medical',
+    title: 'Medical Emergency',
+    icon: 'ph-fill ph-heartbeat',
+    desc: 'If someone falls down or feels very sick.',
+    severity: 'high',
+    accentColor: '#f97316',
+    steps: [
+      { title: 'Check if they Wake Up', desc: 'Gently shake their shoulder and ask "Are you okay?".' },
+      { title: 'Call 911', desc: 'Tell the person on the phone that someone is sick and needs a doctor.' },
+      { title: 'Stay with Them', desc: 'Don\'t leave the person alone. Hold their hand and talk to them.' },
+      { title: 'Open the Door', desc: 'Make sure the door is unlocked so the doctors can get in easily.' }
     ]
   }
 ];
@@ -287,7 +455,6 @@ function loadGlobalProfile() {
         showToast('Access Granted', 'You have been successfully logged in.', 'success');
         localStorage.removeItem('showLoginToast');
     }
-
     // Load Photo
     const savedPic = localStorage.getItem('crisisnav_profile_pic');
     if (savedPic) {
@@ -366,5 +533,93 @@ function showToast(title, message, type = 'success') {
     }, 3500);
 }
 
+// ── Activity Logging ───────────────────────────────────────
+function logActivity(text, iconClass, type) {
+    const activityList = document.querySelector('.activity-list');
+    const sidebarList = document.getElementById('sidebar-activity-list');
+    
+    const now = new Date();
+    const timeStr = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
+    
+    // Ensure icon mapping is correct
+    let icon = iconClass || 'ph-fill ph-info';
+    if (type === 'fire' && !icon.includes('ph-')) icon = 'ph-fill ph-fire';
+
+    const activityData = { text, icon, type, timeStr };
+    
+    // Persist Action Logs
+    let logs = JSON.parse(localStorage.getItem('crisisnav_activity_logs') || '[]');
+    logs.unshift(activityData);
+    if (logs.length > 5) logs.pop();
+    localStorage.setItem('crisisnav_activity_logs', JSON.stringify(logs));
+
+    // 1. Update Main Activity List (if present)
+    if (activityList) {
+        renderActivityList(activityList, logs);
+    }
+
+    // 2. Update Sidebar Activity List (global)
+    if (sidebarList) {
+        renderSidebarActivity(sidebarList, logs);
+    }
+}
+
+function renderActivityList(container, logs) {
+    container.innerHTML = logs.map(log => `
+        <div class="activity-item">
+            <div class="activity-icon ${log.type || ''}" style="${log.type === 'info' ? 'background: var(--primary-blue)' : ''}">
+                <i class="${log.icon}"></i>
+            </div>
+            <div class="activity-content">
+                <p>${log.text}</p>
+                <span>${getCategoryLabel(log.type)}</span>
+            </div>
+            <span class="activity-time">${log.timeStr}</span>
+        </div>
+    `).join('');
+}
+
+function renderSidebarActivity(container, logs) {
+    if (logs.length === 0) {
+        container.innerHTML = '<div class="sidebar-activity-placeholder">No activities recorded in this session</div>';
+        return;
+    }
+    
+    container.innerHTML = logs.slice(0, 5).map(log => `
+        <div class="sidebar-activity-item ${log.type || ''}">
+            <div class="sidebar-activity-icon ${log.type || ''}">
+                <i class="${log.icon}"></i>
+            </div>
+            <div class="sidebar-activity-info">
+                <p>${log.text}</p>
+                <span>${log.timeStr} • ${getCategoryLabel(log.type)}</span>
+            </div>
+        </div>
+    `).join('');
+}
+
+function logHistory(text, icon, type) {
+    logActivity(text, icon, type);
+}
+
+function loadSessionActivity() {
+    const logs = JSON.parse(localStorage.getItem('crisisnav_activity_logs') || '[]');
+    const activityList = document.querySelector('.activity-list');
+    const sidebarList = document.getElementById('sidebar-activity-list');
+    
+    if (activityList && logs.length > 0) renderActivityList(activityList, logs);
+    if (sidebarList) renderSidebarActivity(sidebarList, logs);
+}
+
+function getCategoryLabel(type) {
+    if (type === 'fire') return 'Fire Safety';
+    if (type === 'medical') return 'Medical Response';
+    if (type === 'accident') return 'Traffic Safety';
+    if (type === 'chemical') return 'Hazmat Safety';
+    if (type === 'info') return 'System Alert';
+    return 'General';
+}
+
 // Start the app
 init();
+loadSessionActivity();
