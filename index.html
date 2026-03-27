@@ -13,6 +13,33 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="menu-overlay" id="menu-overlay"></div>
+    <div class="side-menu" id="side-menu">
+        <div class="menu-header">
+            <div class="menu-logo">
+                <i class="ph-fill ph-shield-check"></i>
+                <h2>CrisisNav</h2>
+            </div>
+        </div>
+        <div class="menu-links">
+            <a href="index.html" class="menu-link active"><i class="ph-bold ph-house"></i> Home</a>
+            <a href="my-crises.html" class="menu-link"><i class="ph-bold ph-briefcase"></i> My Crises</a>
+            <a href="reports.html" class="menu-link"><i class="ph-bold ph-file-text"></i> Reports</a>
+            <a href="settings.html" class="menu-link"><i class="ph-bold ph-gear"></i> Settings</a>
+            <a href="profile.html" class="menu-link"><i class="ph-bold ph-user-circle"></i> Profile</a>
+        </div>
+        <div class="menu-recent-activity">
+            <h3>Recent System Activity</h3>
+            <div id="sidebar-activity-list" class="sidebar-activity-list">
+                <!-- Activities will be injected here by JS -->
+                <div class="sidebar-activity-placeholder">No activities recorded in this session</div>
+            </div>
+        </div>
+        <div class="menu-footer">
+            <a href="#" class="logout-btn"><i class="ph-bold ph-sign-out"></i> Log Out</a>
+        </div>
+    </div>
+
     <div class="app-container">
         <!-- Header -->
         <header class="app-header">
@@ -29,6 +56,15 @@
 
         <!-- Main Content -->
         <main class="app-main">
+            <!-- Search Bar -->
+            <div class="search-container">
+                <i class="ph-bold ph-magnifying-glass search-icon"></i>
+                <input type="text" id="crisis-search" placeholder="Search for a crisis or protocol..." autocomplete="off">
+                <div class="voice-indicator">
+                    <i class="ph-fill ph-microphone"></i>
+                </div>
+            </div>
+
             <!-- Emergency Advice Banner -->
             <div class="emergency-banner">
                 <div class="banner-icon"><i class="ph-fill ph-warning-octagon"></i></div>
@@ -109,30 +145,7 @@
                 </button>
             </section>
 
-            <!-- Recent Activity -->
-            <section class="activity-section">
-                <div class="section-header">
-                    <h3>Recent Activity</h3>
-                    <i class="ph-bold ph-clock"></i>
-                </div>
-                <div class="activity-list">
-                    <div class="activity-item">
-                        <div class="activity-icon fire"><i class="ph-fill ph-fire"></i></div>
-                        <div class="activity-content">
-                            <p>Sounded alarm & started evacuation</p>
-                            <span>Fire Prevention</span>
-                        </div>
-                        <span class="activity-time">3:22</span>
-                    </div>
-                    <div class="activity-item">
-                        <div class="activity-icon fire"><i class="ph-fill ph-phone-call"></i></div>
-                        <div class="activity-content">
-                            <p>Fire reported to the fire department</p>
-                        </div>
-                        <span class="activity-time">3:25</span>
-                    </div>
-                </div>
-            </section>
+            <!-- Recent Activity moved to sidebar -->
         </main>
 
         <!-- Bottom Tab Bar -->
