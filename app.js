@@ -268,6 +268,26 @@ const mockData = [
 
 // ── Global Profile ─────────────────────────────────────────
 function loadGlobalProfile() {
+    // Check Auth State
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    const authButtons = document.getElementById('auth-buttons');
+    const profilePicContainer = document.getElementById('profile-pic');
+    
+    if (authButtons && profilePicContainer) {
+        if (isLoggedIn) {
+            authButtons.style.display = 'none';
+            profilePicContainer.style.display = 'block';
+        } else {
+            authButtons.style.display = 'flex';
+            profilePicContainer.style.display = 'none';
+        }
+    }
+
+    if (localStorage.getItem('showLoginToast') === 'true') {
+        showToast('Access Granted', 'You have been successfully logged in.', 'success');
+        localStorage.removeItem('showLoginToast');
+    }
+
     // Load Photo
     const savedPic = localStorage.getItem('crisisnav_profile_pic');
     if (savedPic) {
@@ -299,6 +319,51 @@ function loadGlobalProfile() {
             window.location.href = 'profile.html';
         };
     });
+}
+
+// ── Toast Notification System ──────────────────────────────
+function showToast(title, message, type = 'success') {
+    let container = document.getElementById('toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        container.className = 'toast-container';
+        document.body.appendChild(container);
+    }
+    
+    let iconClass = 'ph-fill ph-check-circle';
+    let iconColor = '#10b981';
+    
+    if (type === 'error') {
+        iconClass = 'ph-fill ph-warning-circle';
+        iconColor = '#ef4444';
+    } else if (type === 'info') {
+        iconClass = 'ph-fill ph-info';
+        iconColor = '#3b82f6';
+    }
+
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerHTML = `
+        <div class="toast-icon" style="color: ${iconColor}"><i class="${iconClass}"></i></div>
+        <div class="toast-content">
+            <div class="toast-title">${title}</div>
+            <div class="toast-message">${message}</div>
+        </div>
+    `;
+    
+    container.appendChild(toast);
+    
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            toast.classList.add('show');
+        });
+    });
+    
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 500);
+    }, 3500);
 }
 
 // Start the app
