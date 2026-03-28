@@ -210,6 +210,19 @@ body {
     transform: scale(0.95);
 }
 
+.category-btn.toggle-btn {
+    border: 1px dashed var(--glass-border);
+    background: rgba(255, 255, 255, 0.4);
+    opacity: 0.8;
+}
+
+.category-btn.toggle-btn:hover {
+    opacity: 1;
+    background: var(--white);
+    border-style: solid;
+    border-color: var(--primary-blue);
+}
+
 .category-icon {
     width: 40px;
     height: 40px;

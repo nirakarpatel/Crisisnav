@@ -100,17 +100,55 @@ function toggleTheme() {
 }
 
 // ── Render Categories ──────────────────────────────────────
-function renderCategories() {
+const MAIN_CATEGORY_IDS = ['fire', 'accident', 'chemical', 'medical'];
+
+function renderCategories(showAll = false) {
     if (!dom.categoryGrid) return;
-    dom.categoryGrid.innerHTML = state.crises.map(c => `
+    
+    // Determine which crises to show
+    let toRender = state.crises;
+    if (!showAll) {
+        toRender = state.crises.filter(c => MAIN_CATEGORY_IDS.includes(c.id));
+    }
+
+    // Render the crisis buttons
+    dom.categoryGrid.innerHTML = toRender.map(c => `
         <button class="category-btn ${c.id}" data-crisis="${c.id}">
-            <div class="category-icon"><i class="${c.icon}"></i></div>
+            <div class="category-icon" style="background: ${c.accentColor || ''}"><i class="${c.icon}"></i></div>
             <span>${c.title.split(' ')[0]}</span>
         </button>
     `).join('');
     
-    document.querySelectorAll('.category-btn').forEach(btn => {
-        btn.addEventListener('click', () => startCrisis(btn.dataset.crisis));
+    // Append the toggle button
+    if (!showAll) {
+        dom.categoryGrid.innerHTML += `
+            <button class="category-btn toggle-btn" id="btn-show-more">
+                <div class="category-icon" style="background: var(--text-muted); opacity: 0.6;"><i class="ph-bold ph-plus"></i></div>
+                <span>More</span>
+            </button>
+        `;
+    } else {
+        dom.categoryGrid.innerHTML += `
+            <button class="category-btn toggle-btn" id="btn-show-less">
+                <div class="category-icon" style="background: var(--text-muted); opacity: 0.6;"><i class="ph-bold ph-minus"></i></div>
+                <span>Less</span>
+            </button>
+        `;
+    }
+    
+    attachCategoryEvents();
+    
+    // Toggle Event Listeners
+    const btnMore = document.getElementById('btn-show-more');
+    if (btnMore) btnMore.addEventListener('click', () => renderCategories(true));
+    
+    const btnLess = document.getElementById('btn-show-less');
+    if (btnLess) btnLess.addEventListener('click', () => renderCategories(false));
+}
+
+function attachCategoryEvents() {
+    document.querySelectorAll('.category-btn:not(.toggle-btn)').forEach(btn => {
+        btn.onclick = () => startCrisis(btn.dataset.crisis);
     });
 }
 
@@ -283,17 +321,35 @@ function showSmartRecommendation(crisisId) {
 // ── Search Logic ───────────────────────────────────────────
 function handleSearch() {
     if (!dom.crisisSearch) return;
-    const query = dom.crisisSearch.value.toLowerCase();
-    const categories = document.querySelectorAll('.category-btn');
+    const query = dom.crisisSearch.value.toLowerCase().trim();
     
-    categories.forEach(btn => {
-        const title = btn.querySelector('span').textContent.toLowerCase();
-        if (title.includes(query)) {
-            btn.style.display = 'flex';
-        } else {
-            btn.style.display = 'none';
-        }
-    });
+    if (query === "") {
+        renderCategories(); // Reset to main 4
+        return;
+    }
+
+    // Search across ALL crises
+    const matches = state.crises.filter(c => 
+        c.title.toLowerCase().includes(query) || 
+        (c.subbranch && c.subbranch.toLowerCase().includes(query)) ||
+        (c.category && c.category.toLowerCase().includes(query))
+    );
+
+    // Render matches (including hidden ones)
+    dom.categoryGrid.innerHTML = matches.map(c => `
+        <button class="category-btn ${c.id}" data-crisis="${c.id}" style="animation: fadeIn 0.3s ease;">
+            <div class="category-icon" style="background: ${c.accentColor || 'var(--primary-blue)'}">
+                <i class="${c.icon || 'ph-fill ph-shield-warning'}"></i>
+            </div>
+            <span>${c.title.split(' ')[0]}</span>
+        </button>
+    `).join('');
+
+    if (matches.length === 0) {
+        dom.categoryGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.85rem;">No protocols found matching your search.</div>';
+    }
+
+    attachCategoryEvents();
 }
 
 // ── Event Handlers ─────────────────────────────────────────
@@ -325,6 +381,50 @@ function initEvents() {
                 recognition.start();
             } else {
                 alert('Speech Recognition is not supported in this browser.');
+            }
+        });
+    }
+
+    // Report Other Crisis
+    const reportOtherBtn = document.querySelector('.report-other-btn');
+    if (reportOtherBtn) {
+        reportOtherBtn.addEventListener('click', () => {
+            window.location.href = 'other-crises.html';
+        });
+    }
+
+    // AI Search Assistant (in reports.html)
+    const aiSearchInput = document.getElementById('ai-crisis-search');
+    const aiResponseArea = document.getElementById('ai-response-area');
+    if (aiSearchInput && aiResponseArea) {
+        aiSearchInput.addEventListener('input', (e) => {
+            const query = e.target.value.trim();
+            if (query.length < 3) {
+                aiResponseArea.style.display = 'none';
+                return;
+            }
+
+            const result = handleAISearch(query);
+            if (result && result.confidence > 0.5) {
+                aiResponseArea.style.display = 'block';
+                aiResponseArea.innerHTML = `
+                    <div class="ai-result-card glass-card animate-fade-in" style="padding: 16px; border-left: 4px solid var(--primary-blue); margin-top: 12px; background: white;">
+                        <p style="font-size: 0.9rem; margin-bottom: 8px; color: var(--text-main); font-weight: 500;">${result.answer}</p>
+                        <hr style="border: 0; border-top: 1px solid rgba(0,0,0,0.05); margin: 8px 0;">
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            ${result.crisis.steps.slice(0, 3).map((s, i) => `
+                                <div style="display: flex; gap: 8px; align-items: flex-start;">
+                                    <span style="font-size: 0.75rem; font-weight: 800; color: var(--primary-blue); min-width: 14px;">${i+1}</span>
+                                    <p style="font-size: 0.75rem; color: var(--text-muted); line-height: 1.2;">${s.title}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <button class="btn-primary" style="margin-top: 12px; font-size: 0.75rem; padding: 6px 12px; width: auto;" onclick="window.location.href='other-crises.html'">View Full Protocol</button>
+                    </div>
+                `;
+            } else if (query.length > 5) {
+                aiResponseArea.style.display = 'block';
+                aiResponseArea.innerHTML = `<p style="font-size: 0.75rem; color: var(--text-muted); padding: 12px;">Searching knowledge base... (No direct match yet)</p>`;
             }
         });
     }
@@ -442,8 +542,230 @@ const mockData = [
       { title: 'Stay with Them', desc: 'Don\'t leave the person alone. Hold their hand and talk to them.' },
       { title: 'Open the Door', desc: 'Make sure the door is unlocked so the doctors can get in easily.' }
     ]
+  },
+  // --- EXTENDED CRISIS DATA FROM KNOWLEDGE BASE ---
+  {
+    id: 'medical-physical',
+    title: 'Medical & Physical Emergencies',
+    category: 'Emergency',
+    icon: 'ph-fill ph-first-aid',
+    accentColor: '#ef4444',
+    problem: 'This situation can create risk, confusion, or harm if not handled properly.',
+    solution: 'Timely action, awareness, and proper response can reduce damage and ensure safety.',
+    steps: [
+      { title: 'Stay calm and assess the situation.', desc: 'Take a deep breath and look around to understand what is happening.' },
+      { title: 'Ensure personal safety first.', desc: 'Do not put yourself in danger while trying to help others.' },
+      { title: 'Contact relevant authorities.', desc: 'Call emergency helplines immediately for professional help.' },
+      { title: 'Follow basic safety procedures.', desc: 'Apply first aid or safety protocols you have learned.' },
+      { title: 'Help others if possible.', desc: 'Assist those who are most vulnerable if it is safe to do so.' }
+    ]
+  },
+  {
+    id: 'accident-physical',
+    title: 'Accident & Physical Incidents',
+    category: 'Safety',
+    icon: 'ph-fill ph-car-crash',
+    accentColor: '#f97316',
+    problem: 'This situation can create risk, confusion, or harm if not handled properly.',
+    solution: 'Timely action, awareness, and proper response can reduce damage and ensure safety.',
+    steps: [
+      { title: 'Stay calm and assess the situation.', desc: 'Evaluate the extent of the accident and identify hazards.' },
+      { title: 'Ensure personal safety first.', desc: 'Move to a safe location away from traffic or debris.' },
+      { title: 'Contact relevant authorities.', desc: 'Call traffic police or ambulance as required.' },
+      { title: 'Follow basic safety procedures.', desc: 'Turn off engines or secure the area if possible.' },
+      { title: 'Help others if possible.', desc: 'Provide comfort and basic aid to any injured parties.' }
+    ]
+  },
+  {
+    id: 'personal-safety-crime',
+    title: 'Safety & Crime Situations',
+    subbranch: 'Personal Safety & Crime',
+    category: 'Security',
+    icon: 'ph-fill ph-mask-sad',
+    accentColor: '#1e293b',
+    problem: 'This situation can create risk, confusion, or harm if not handled properly.',
+    solution: 'Awareness and quick reporting can prevent further harm.',
+    steps: [
+      { title: 'Stay calm and assess the situation.', desc: 'Avoid panic to keep your mind clear for decision making.' },
+      { title: 'Ensure personal safety first.', desc: 'Find a well-lit, populated area or lock yourself in a safe room.' },
+      { title: 'Contact relevant authorities.', desc: 'Call the police emergency number (112/100) immediately.' },
+      { title: 'Follow basic safety procedures.', desc: 'Do not confront the perpetrator; focus on escape.' },
+      { title: 'Help others if possible.', desc: 'Alert people nearby without drawing attention to yourself.' }
+    ]
+  },
+  {
+    id: 'harassment-abuse',
+    title: 'Harassment & Abuse',
+    category: 'Legal/Personal',
+    icon: 'ph-fill ph-warning-octagon',
+    accentColor: '#be185d',
+    problem: 'This situation can create risk, confusion, or harm if not handled properly.',
+    solution: 'Documentation and reporting are key to legal protection.',
+    steps: [
+      { title: 'Stay calm and assess the situation.', desc: 'Identify the source and nature of the harassment.' },
+      { title: 'Ensure personal safety first.', desc: 'Distance yourself from the abuser immediately.' },
+      { title: 'Contact relevant authorities.', desc: 'Report to HR, workplace safety, or local police.' },
+      { title: 'Follow basic safety procedures.', desc: 'Document incidents with dates, times, and witnesses.' },
+      { title: 'Help others if possible.', desc: 'Encourage other victims to come forward safely.' }
+    ]
+  },
+  {
+    id: 'police-rights',
+    title: 'Police Interaction & Rights',
+    category: 'Legal',
+    icon: 'ph-fill ph-police-car',
+    accentColor: '#1d4ed8',
+    problem: 'Knowing your rights during police interaction is crucial for safety.',
+    solution: 'Cooperation combined with knowledge of rights ensures a fair process.',
+    steps: [
+      { title: 'Stay calm and assess the situation.', desc: 'Be polite and avoid any sudden movements.' },
+      { title: 'Ensure personal safety first.', desc: 'Keep your hands visible at all times.' },
+      { title: 'Contact relevant authorities.', desc: 'Request to speak to a lawyer or inform a family member.' },
+      { title: 'Follow basic safety procedures.', desc: 'Do not resist arrest physically; state your rights clearly.' },
+      { title: 'Help others if possible.', desc: 'If witnessing an interaction, record from a safe distance.' }
+    ]
+  },
+  {
+    id: 'arrest-detention',
+    title: 'Arrest / Detention Situations',
+    category: 'Legal',
+    icon: 'ph-fill ph-handcuffs',
+    accentColor: '#334155',
+    problem: 'Arrest can be a high-stress and confusing crisis.',
+    solution: 'Legal aid and following protocol can reduce the duration of detention.',
+    steps: [
+      { title: 'Stay calm and assess the situation.', desc: 'Understand the reason for the arrest if stated.' },
+      { title: 'Ensure personal safety first.', desc: 'Do not argue or escalate the tension.' },
+      { title: 'Contact relevant authorities.', desc: 'Use your right to one phone call for legal representation.' },
+      { title: 'Follow basic safety procedures.', desc: 'Provide only necessary ID information; remain silent otherwise.' },
+      { title: 'Help others if possible.', desc: 'Share contact info for legal aid with others in detention.' }
+    ]
+  },
+  {
+    id: 'cyber-crime-fraud',
+    title: 'Digital & Cyber Emergencies',
+    subbranch: 'Cyber Crime & Online Fraud',
+    category: 'Cyber',
+    icon: 'ph-fill ph-shield-check',
+    accentColor: '#7c3aed',
+    problem: 'Online fraud can lead to financial and identity loss.',
+    solution: 'Immediate reporting and freezing accounts can mitigate losses.',
+    steps: [
+      { title: 'Stay calm and assess the situation.', desc: 'Identify which accounts or data have been compromised.' },
+      { title: 'Ensure personal safety first.', desc: 'Change passwords and enable 2FA on all other accounts.' },
+      { title: 'Contact relevant authorities.', desc: 'Report to the National Cyber Crime Portal or your bank.' },
+      { title: 'Follow basic safety procedures.', desc: 'Do not click on further suspicious links.' },
+      { title: 'Help others if possible.', desc: 'Warn your contacts if your account is sending spam.' }
+    ]
+  },
+  {
+    id: 'identity-document-issues',
+    title: 'Identity & Document Issues',
+    category: 'Administrative',
+    icon: 'ph-fill ph-identification-card',
+    accentColor: '#059669',
+    problem: 'Loss of Aadhaar, PAN, or Passport can halt essential services.',
+    solution: 'Filing an FIR and applying for duplicates is the standard procedure.',
+    steps: [
+      { title: 'Stay calm and assess the situation.', desc: 'List all documents that are missing or compromised.' },
+      { title: 'Ensure personal safety first.', desc: 'Watch for unauthorized transactions in your name.' },
+      { title: 'Contact relevant authorities.', desc: 'File a police complain (FIR/NCR) for the lost documents.' },
+      { title: 'Follow basic safety procedures.', desc: 'Block the cards if they are linked to the documents.' },
+      { title: 'Help others if possible.', desc: 'Help others file reports if they were lost during a disaster.' }
+    ]
+  },
+  {
+    id: 'legal-fir-complaint',
+    title: 'Legal Crisis: Filing FIR',
+    category: 'Legal',
+    icon: 'ph-fill ph-gavel',
+    accentColor: '#b45309',
+    problem: 'Difficulty in filing FIRs can delay justice.',
+    solution: 'Knowing the ' + 'Zero FIR' + ' rule helps in immediate registration.',
+    steps: [
+      { title: 'Stay calm and assess the situation.', desc: 'Clearly state the facts of the incident to the officer.' },
+      { title: 'Ensure personal safety first.', desc: 'Wait in a public area of the police station.' },
+      { title: 'Contact relevant authorities.', desc: 'If refused, contact the SP or use online FIR portals.' },
+      { title: 'Follow basic safety procedures.', desc: 'Read the FIR carefully before signing; get a free copy.' },
+      { title: 'Help others if possible.', desc: 'Assist illiterate or elderly persons in drafting complaints.' }
+    ]
+  },
+  {
+    id: 'property-rental-dispute',
+    title: 'Property & Rental Disputes',
+    category: 'Civil',
+    icon: 'ph-fill ph-house-line',
+    accentColor: '#10b981',
+    problem: 'Illegal eviction or deposit withholding.',
+    solution: 'Mediation or legal notice is often the first step.',
+    steps: [
+      { title: 'Stay calm and assess the situation.', desc: 'Review your rental agreement for relevant clauses.' },
+      { title: 'Ensure personal safety first.', desc: 'Do not engage in physical altercations over property.' },
+      { title: 'Contact relevant authorities.', desc: 'Consult a lawyer or a rental housing board.' },
+      { title: 'Follow basic safety procedures.', desc: 'Keep all communication in writing (email/letter).' },
+      { title: 'Help others if possible.', desc: 'Form a tenants association to prevent group harassment.' }
+    ]
+  },
+  {
+    id: 'consumer-rights-issue',
+    title: 'Consumer Rights Issues',
+    category: 'Commerce',
+    icon: 'ph-fill ph-shopping-bag',
+    accentColor: '#facc15',
+    problem: 'Defective products or service deficiency.',
+    solution: 'Filing a complaint via Jago Grahak Jago or Consumer Court.',
+    steps: [
+      { title: 'Stay calm and assess the situation.', desc: 'Gather all receipts and warranty documents.' },
+      { title: 'Ensure personal safety first.', desc: 'If a product is dangerous, stop using it immediately.' },
+      { title: 'Contact relevant authorities.', desc: 'Call the National Consumer Helpline (1915).' },
+      { title: 'Follow basic safety procedures.', desc: 'Send a formal notice to the company before court.' },
+      { title: 'Help others if possible.', desc: 'Post a public review to warn other consumers.' }
+    ]
+  },
+  {
+    id: 'traffic-violations',
+    title: 'Traffic Violations & Legal Issues',
+    category: 'Legal/Road',
+    icon: 'ph-fill ph-traffic-signal',
+    accentColor: '#475569',
+    problem: 'Wrongful fines or license issues.',
+    solution: 'Paying online or contesting in court if necessary.',
+    steps: [
+      { title: 'Stay calm and assess the situation.', desc: 'Record the location and officer details if stopped.' },
+      { title: 'Ensure personal safety first.', desc: 'Park in a safe spot away from traffic flow.' },
+      { title: 'Contact relevant authorities.', desc: 'Ask for a physical challan or check online portals.' },
+      { title: 'Follow basic safety procedures.', desc: 'Do not offer bribes; ask for the violations list.' },
+      { title: 'Help others if possible.', desc: 'Witness and document if you see harassment on the road.' }
+    ]
   }
 ];
+
+// --- AI Search Implementation ---
+function handleAISearch(query) {
+    if (!query) return null;
+    query = query.toLowerCase();
+    
+    // Simple mock LLM logic: find best match in mockData
+    const match = mockData.find(c => 
+        c.title.toLowerCase().includes(query) || 
+        (c.subbranch && c.subbranch.toLowerCase().includes(query)) ||
+        (c.category && c.category.toLowerCase().includes(query)) ||
+        c.steps.some(s => s.title.toLowerCase().includes(query))
+    );
+    
+    if (match) {
+        return {
+            answer: `Based on your request about "${query}", here is the ${match.title} protocol.`,
+            crisis: match,
+            confidence: 0.95
+        };
+    }
+    
+    return {
+        answer: "I couldn't find a specific protocol for that. Please try searching for keywords like 'Fire', 'Cyber', 'Medical', or 'Legal'.",
+        confidence: 0.3
+    };
+}
 
 // ── Global Profile ─────────────────────────────────────────
 function loadGlobalProfile() {

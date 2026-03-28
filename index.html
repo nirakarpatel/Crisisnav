@@ -22,14 +22,26 @@
         } else if (session) {
             // Ensure localStorage reflects Supabase state for legacy code
             localStorage.setItem('isLoggedIn', 'true');
+            
+            // UI Polishing: Show Profile Pic & Handle User Info
+            const user = session.user;
+            const profilePicDiv = document.getElementById('profile-pic');
+            if (profilePicDiv) {
+                profilePicDiv.style.display = 'flex';
+                // If user has a Google avatar, use it
+                const googleAvatar = user.user_metadata?.avatar_url;
+                if (googleAvatar) {
+                    profilePicDiv.querySelector('img').src = googleAvatar;
+                    localStorage.setItem('crisisnav_profile_pic', googleAvatar);
+                }
+            }
         }
 
         // Handle Logout
         document.querySelectorAll('.logout-btn').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 e.preventDefault();
-                const { error } = await supabase.auth.signOut();
-                if (error) console.error('Logout error:', error.message);
+                await supabase.auth.signOut();
                 localStorage.removeItem('isLoggedIn');
                 window.location.replace('signin.html');
             });
