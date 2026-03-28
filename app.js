@@ -76,6 +76,29 @@ async function init() {
     checkOnboardingGuide();
 }
 
+// ── Menu Management ────────────────────────────────────────
+function initMenu() {
+    if (dom.menuToggle) {
+        dom.menuToggle.addEventListener('click', toggleMenu);
+    }
+    if (dom.menuOverlay) {
+        dom.menuOverlay.addEventListener('click', toggleMenu);
+    }
+
+    // Auto-close menu when clicking links on mobile
+    document.querySelectorAll('.menu-link').forEach(link => {
+        link.addEventListener('click', () => {
+            if (document.body.classList.contains('menu-open')) {
+                toggleMenu();
+            }
+        });
+    });
+}
+
+function toggleMenu() {
+    document.body.classList.toggle('menu-open');
+}
+
 // ── Theme Management ──────────────────────────────────────
 function initTheme() {
     const savedTheme = localStorage.getItem('crisisnav_theme') || 'light';
