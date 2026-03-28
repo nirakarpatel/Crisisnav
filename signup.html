@@ -582,13 +582,17 @@
                 submitBtn.disabled = true;
                 submitBtn.textContent = 'Creating Account...';
 
-                // 1. Supabase Auth Sign Up
+                // 1. Supabase Auth Sign Up (passes all data to our database trigger)
                 const { data: authData, error: authError } = await supabase.auth.signUp({
                     email,
                     password,
                     options: {
                         data: {
-                            full_name: fullName
+                            full_name: fullName,
+                            phone: phone,
+                            blood_group: bloodGroup,
+                            emergency_contact_name: emergencyName,
+                            emergency_contact_phone: emergencyPhone
                         }
                     }
                 });
@@ -598,25 +602,10 @@
                 const user = authData.user;
                 if (!user) throw new Error('No user data returned.');
 
-                // 2. Insert into Profiles table
-                submitBtn.textContent = 'Setting up Profile...';
-                const { error: profileError } = await supabase
-                    .from('profiles')
-                    .insert([
-                        {
-                            id: user.id,
-                            full_name: fullName,
-                            phone: phone,
-                            blood_group: bloodGroup,
-                            emergency_contact_name: emergencyName,
-                            emergency_contact_phone: emergencyPhone
-                        }
-                    ]);
-
-                if (profileError) throw profileError;
-
-                // Success
+                // 2. Success (The Profile is now created automatically by the database trigger!)
                 localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('crisisnav_profile_name', fullName);
+                localStorage.setItem('crisisnav_profile_role', 'Crisis Responder'); // Default role for new users
                 localStorage.setItem('showSignupGuide', 'true');
                 localStorage.setItem('showLoginToast', 'true');
                 localStorage.setItem('isNewUser', 'true');
