@@ -174,6 +174,58 @@
             transform: scale(0.97);
             box-shadow: 0 5px 10px rgba(59, 130, 246, 0.3);
         }
+
+        /* Google Sign-In Button */
+        .google-auth-btn {
+            width: 100%;
+            background: #ffffff;
+            color: #1f2937;
+            border: 1px solid #e5e7eb;
+            padding: 16px;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+        .google-auth-btn:hover {
+            background: #f9fafb;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            transform: translateY(-2px);
+        }
+        .google-auth-btn img {
+            width: 20px;
+            height: 20px;
+        }
+
+        .section-divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 24px 0;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .section-divider::before,
+        .section-divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .section-divider:not(:empty)::before {
+            margin-right: 1rem;
+        }
+        .section-divider:not(:empty)::after {
+            margin-left: 1rem;
+        }
+
         .auth-links {
             margin-top: 24px;
             font-size: 0.95rem;
@@ -370,6 +422,13 @@
                     </div>
 
                     <button type="submit" class="auth-submit-btn">Complete Sign Up</button>
+                    
+                    <div class="section-divider">OR</div>
+                    
+                    <button type="button" id="google-signup" class="google-auth-btn">
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+                        Sign up with Google
+                    </button>
                 </form>
 
                 <div class="auth-links">
@@ -545,6 +604,20 @@
                 alert('Registration Failed: ' + err.message);
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Complete Sign Up';
+            }
+        });
+
+        // Google OAuth Logic
+        document.getElementById('google-signup').addEventListener('click', async () => {
+            const { error } = await supabase.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    redirectTo: window.location.origin + '/index.html'
+                }
+            });
+            if (error) {
+                console.error('Google Auth Error:', error.message);
+                alert('Google Sign-In Failed: ' + error.message);
             }
         });
     </script>
