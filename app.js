@@ -12,6 +12,18 @@
     }
 })();
 
+// -- GLOBAL TOUR TRIGGER --
+function startTour() {
+    let filename = location.pathname.split('/').pop() || 'index.html';
+    if (filename === '' || filename === '/') filename = 'index.html';
+    
+    if (typeof pageTours !== 'undefined' && pageTours[filename]) {
+        // Force tour to start even if already completed
+        localStorage.removeItem('tour_completed_ ' + filename);
+        new AppTour(filename, pageTours[filename], true);
+    }
+}
+
 // ── State ──────────────────────────────────────────────────
 let state = {
     crises: [],
@@ -469,6 +481,21 @@ function initEvents() {
             else if (spanText === 'Settings') window.location.href = 'settings.html';
         });
     });
+
+    // Sidebar Tour Trigger
+    const btnTutorial = document.getElementById('btn-start-tutorial');
+    if (btnTutorial) btnTutorial.onclick = (e) => {
+        e.preventDefault();
+        document.body.classList.remove('menu-open');
+        startTour();
+    };
+
+    // Header Help Trigger
+    const btnHelp = document.getElementById('help-trigger');
+    if (btnHelp) btnHelp.onclick = (e) => {
+        e.preventDefault();
+        startTour();
+    };
 }
 
 
@@ -1007,13 +1034,16 @@ class AppTour {
         this.tooltip.className = 'tour-tooltip';
         this.tooltip.innerHTML = `
             <div class="tour-tooltip-content">
-                <div class="tour-tooltip-icon"><i class="ph-fill ph-info"></i></div>
+                <div class="tour-tooltip-icon"><i class="ph-fill ph-sparkles"></i></div>
                 <div class="tour-tooltip-text">
                     <h4>Feature Guide</h4>
                     <p id="tour-message"></p>
                     <div class="tour-tooltip-footer">
                         <span class="tour-steps-indicator" id="tour-indicator"></span>
-                        <button class="tour-next-btn" id="tour-next-btn">Next</button>
+                        <div class="tour-tooltip-btns">
+                            <button class="tour-close-btn" id="tour-close-btn">Exit</button>
+                            <button class="tour-next-btn" id="tour-next-btn">Next</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1023,6 +1053,7 @@ class AppTour {
         document.body.appendChild(this.tooltip);
         
         document.getElementById('tour-next-btn').addEventListener('click', () => this.nextStep());
+        document.getElementById('tour-close-btn').addEventListener('click', () => this.finish());
         
         // Wait briefly for page to settle
         setTimeout(() => this.showStep(), 1200);

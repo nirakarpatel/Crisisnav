@@ -1418,6 +1418,12 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 12px;
+}
+
+.tour-tooltip-btns {
+    display: flex;
+    gap: 8px;
 }
 
 .tour-steps-indicator {
@@ -1426,20 +1432,33 @@ body {
     color: #94a3b8;
 }
 
-.tour-next-btn {
-    background: #10b981;
-    color: white;
+.tour-next-btn, .tour-close-btn {
     border: none;
     padding: 8px 16px;
     border-radius: 8px;
     font-weight: 700;
     font-size: 0.85rem;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.2s;
+}
+
+.tour-next-btn {
+    background: #10b981;
+    color: white;
 }
 
 .tour-next-btn:active {
     background: #059669;
+}
+
+.tour-close-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: #cbd5e1;
+}
+
+.tour-close-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
 }
 
 /* Final Mobile Polish */
