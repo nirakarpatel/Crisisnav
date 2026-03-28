@@ -12,11 +12,28 @@
     <script src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
     <link rel="stylesheet" href="style.css">
     
-    <!-- Instant Auth Guard -->
-    <script>
-        if (localStorage.getItem('isLoggedIn') !== 'true') {
+    <!-- Instant Auth Guard & Logout -->
+    <script type="module">
+        import { supabase } from './supabase.js'
+        
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (!session && localStorage.getItem('isLoggedIn') !== 'true') {
             window.location.replace('signin.html');
+        } else if (session) {
+            // Ensure localStorage reflects Supabase state for legacy code
+            localStorage.setItem('isLoggedIn', 'true');
         }
+
+        // Handle Logout
+        document.querySelectorAll('.logout-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                e.preventDefault();
+                await supabase.auth.signOut();
+                localStorage.removeItem('isLoggedIn');
+                window.location.replace('signin.html');
+            });
+        });
     </script>
 </head>
 <body>
@@ -63,6 +80,26 @@
 
         <!-- Main Content -->
         <main class="app-main">
+            <!-- AI Search Assistant -->
+            <section class="search-section" style="margin-bottom: 24px;">
+                <div class="ai-search-container glass-card" style="padding: 20px; border: 1px solid var(--primary-blue); background: rgba(59, 130, 246, 0.05);">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                        <i class="ph-fill ph-sparkles" style="color: var(--primary-blue); font-size: 1.25rem;"></i>
+                        <h3 style="font-size: 1rem; font-weight: 700;">Crisis AI Assistant</h3>
+                    </div>
+                    <div class="search-container" style="margin-bottom: 12px; width: 100%;">
+                        <i class="ph-bold ph-magnifying-glass search-icon"></i>
+                        <input type="text" id="ai-crisis-search" placeholder="Ask about any crisis (e.g. 'cyber fraud')..." autocomplete="off" style="width: 100%;">
+                    </div>
+                    <div id="ai-response-area" class="ai-response-area" style="display: none;">
+                        <!-- AI Response content will be injected here -->
+                    </div>
+                </div>
+                <button class="report-other-btn" style="margin-top: 16px; width: 100%; border: 1px dashed var(--primary-blue); background: transparent; color: var(--primary-blue); padding: 12px; border-radius: 12px; font-weight: 600; cursor: pointer;">
+                    View All Crisis Protocols
+                </button>
+            </section>
+
             <!-- Generate Report Button -->
             <button class="next-step-btn" style="margin-bottom: 8px;">
                 <span>Generate New Report</span>

@@ -12,12 +12,6 @@
     <script src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
     <link rel="stylesheet" href="style.css">
     
-    <!-- Instant Auth Guard -->
-    <script>
-        if (localStorage.getItem('isLoggedIn') !== 'true') {
-            window.location.replace('signin.html');
-        }
-    </script>
     <style>
         .profile-header {
             display: flex;
@@ -155,55 +149,51 @@
         <!-- Header -->
         <header class="app-header">
             <div class="header-left">
-                <button onclick="window.history.back()" class="icon-btn"><i class="ph-bold ph-arrow-left"></i></button>
-                <h1 class="app-title">My Profile</h1>
+                <button id="menu-toggle" class="icon-btn"><i class="ph-bold ph-list"></i></button>
+                <h1 class="app-title">Profile</h1>
             </div>
             <div class="header-right">
-                <!-- Keep visually balanced -->
-                <div style="width: 40px;"></div>
+                <div class="profile-pic">
+                    <img id="header-profile-pic" src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&h=100&fit=crop" alt="Profile">
+                </div>
             </div>
         </header>
 
         <!-- Main Content -->
         <main class="app-main">
             <div class="profile-header">
-                <input type="file" id="file-upload" accept="image/*" style="display: none;">
                 <div class="profile-img-container" id="upload-trigger">
                     <img id="profile-preview" src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&h=100&fit=crop" alt="Profile">
                     <div class="upload-icon"><i class="ph-bold ph-camera"></i></div>
                 </div>
-                <div style="text-align: center;">
-                    <h2 id="profile-name-display" style="font-size: 1.25rem; font-weight: 700;">Alex Carter</h2>
-                    <p id="profile-role-display" style="font-size: 0.9rem; color: var(--text-muted);">Floor Safety Warden</p>
-                </div>
+                <input type="file" id="file-upload" style="display: none;" accept="image/*">
+                
+                <h2 id="profile-name-display">Alex Carter</h2>
+                <p id="profile-role-display">User</p>
             </div>
 
-            <form id="profile-form" class="steps-section" style="padding: 24px 20px;">
-                <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 24px; display: flex; align-items: center; gap: 8px;">
-                    <i class="ph-bold ph-identification-card" style="color: var(--primary-blue); font-size: 1.2rem;"></i> Personal Details
-                </h3>
-                
+            <form id="profile-form" class="profile-details" style="padding: 24px 20px;">
                 <div class="form-group">
                     <label class="form-label">Full Name</label>
-                    <input type="text" id="input-name" class="form-input" placeholder="e.g. Alex Carter">
+                    <input type="text" id="input-name" class="form-input" placeholder="Enter your full name">
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Role / Designation</label>
-                    <input type="text" id="input-role" class="form-input" placeholder="e.g. Floor Safety Warden">
+                    <label class="form-label">Role</label>
+                    <input type="text" id="input-role" class="form-input" placeholder="Enter your role">
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Email Address</label>
-                    <input type="email" id="input-email" class="form-input" placeholder="e.g. alex@company.com">
+                    <label class="form-label">Email</label>
+                    <input type="email" id="input-email" class="form-input" placeholder="Enter your email" readonly>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Phone Number</label>
-                    <input type="tel" id="input-phone" class="form-input" placeholder="e.g. +1 555 123 4567">
+                    <label class="form-label">Phone</label>
+                    <input type="tel" id="input-phone" class="form-input" placeholder="Enter your phone number">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Blood Group</label>
-                    <input type="text" id="input-blood" class="form-input" placeholder="e.g. O+">
+                    <input type="text" id="input-blood" class="form-input" placeholder="Enter your blood group">
                 </div>
-                
+
                 <button type="submit" class="save-btn">
                     <i class="ph-bold ph-floppy-disk"></i> Save Changes
                 </button>
@@ -212,12 +202,11 @@
 
         <!-- Bottom Tab Bar -->
         <nav class="app-nav">
-            <button class="nav-item">
+            <button class="nav-item" onclick="window.location.href='index.html'">
                 <i class="ph-bold ph-house"></i>
                 <span>Home</span>
             </button>
-            <button class="nav-item">
-
+            <button class="nav-item" onclick="window.location.href='my-crises.html'">
                 <div class="nav-badge">1</div>
                 <i class="ph-bold ph-briefcase"></i>
                 <span>My Crisis</span>
@@ -227,25 +216,27 @@
                     <i class="ph-fill ph-microphone"></i>
                 </div>
             </button>
-            <button class="nav-item">
+            <button class="nav-item" onclick="window.location.href='reports.html'">
                 <i class="ph-bold ph-file-text"></i>
                 <span>Reports</span>
             </button>
-            <button class="nav-item">
-
-                <i class="ph-bold ph-gear"></i>
-                <span>Settings</span>
+            <button class="nav-item active" onclick="window.location.href='profile.html'">
+                <i class="ph-bold ph-user-circle"></i>
+                <span>Profile</span>
             </button>
         </nav>
     </div>
 
     <!-- Scripts -->
     <script src="app.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
+    <script type="module">
+        import { supabase } from './supabase.js'
+
+        document.addEventListener('DOMContentLoaded', async () => {
             const fileUpload = document.getElementById('file-upload');
             const uploadTrigger = document.getElementById('upload-trigger');
             const profilePreview = document.getElementById('profile-preview');
+            const headerProfilePic = document.getElementById('header-profile-pic');
             const profileForm = document.getElementById('profile-form');
             
             const inputName = document.getElementById('input-name');
@@ -257,15 +248,41 @@
             const displayTitle = document.getElementById('profile-name-display');
             const displayRole = document.getElementById('profile-role-display');
 
-            // Load from localStorage
-            const loadProfileData = () => {
-                const pic = localStorage.getItem('crisisnav_profile_pic');
-                if (pic) profilePreview.src = pic;
+            // 1. Check Session
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+                window.location.replace('signin.html');
+                return;
+            }
+            localStorage.setItem('isLoggedIn', 'true');
 
-                const name = localStorage.getItem('crisisnav_profile_name');
-                if (name) {
-                    inputName.value = name;
-                    displayTitle.textContent = name;
+            const user = session.user;
+            inputEmail.value = user.email;
+
+            // 2. Load Profile Data
+            const loadProfileData = async () => {
+                const { data: profile, error } = await supabase
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', user.id)
+                    .single();
+
+                if (error && error.code !== 'PGRST116') {
+                    console.warn('Profile fetch error:', error.message);
+                }
+
+                if (profile) {
+                    inputName.value = profile.full_name || '';
+                    displayTitle.textContent = profile.full_name || 'User';
+                    inputPhone.value = profile.phone || '';
+                    inputBlood.value = profile.blood_group || '';
+                }
+
+                // Handle Profile Pic & Role (Local storage for simplicity in this prototype)
+                const pic = localStorage.getItem('crisisnav_profile_pic');
+                if (pic) {
+                    profilePreview.src = pic;
+                    if (headerProfilePic) headerProfilePic.src = pic;
                 }
 
                 const role = localStorage.getItem('crisisnav_profile_role');
@@ -273,18 +290,19 @@
                     inputRole.value = role;
                     displayRole.textContent = role;
                 }
-
-                const email = localStorage.getItem('crisisnav_profile_email');
-                if (email) inputEmail.value = email;
-
-                const phone = localStorage.getItem('crisisnav_profile_phone');
-                if (phone) inputPhone.value = phone;
-
-                const blood = localStorage.getItem('crisisnav_profile_blood');
-                if (blood) inputBlood.value = blood;
             };
 
-            loadProfileData();
+            await loadProfileData();
+
+            // Handle Logout
+            document.querySelectorAll('.logout-btn').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    await supabase.auth.signOut();
+                    localStorage.removeItem('isLoggedIn');
+                    window.location.replace('signin.html');
+                });
+            });
 
             // Handle image click
             uploadTrigger.addEventListener('click', () => fileUpload.click());
@@ -297,35 +315,55 @@
                     reader.onload = (event) => {
                         const dataUrl = event.target.result;
                         profilePreview.src = dataUrl;
+                        if (headerProfilePic) headerProfilePic.src = dataUrl;
                         localStorage.setItem('crisisnav_profile_pic', dataUrl);
-                        if (typeof loadGlobalProfile === 'function') loadGlobalProfile();
                     };
                     reader.readAsDataURL(file);
                 }
             });
 
             // Handle form save
-            profileForm.addEventListener('submit', (e) => {
+            profileForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                localStorage.setItem('crisisnav_profile_name', inputName.value);
-                localStorage.setItem('crisisnav_profile_role', inputRole.value);
-                localStorage.setItem('crisisnav_profile_email', inputEmail.value);
-                localStorage.setItem('crisisnav_profile_phone', inputPhone.value);
-                localStorage.setItem('crisisnav_profile_blood', inputBlood.value);
-
-                displayTitle.textContent = inputName.value || 'Anonymous user';
-                displayRole.textContent = inputRole.value || 'No Role';
-                
                 const saveBtn = profileForm.querySelector('.save-btn');
                 const originalText = saveBtn.innerHTML;
-                saveBtn.innerHTML = '<i class="ph-bold ph-check"></i> Saved!';
-                saveBtn.style.background = '#16a34a';
-                if (typeof loadGlobalProfile === 'function') loadGlobalProfile();
-                
-                setTimeout(() => {
+
+                try {
+                    saveBtn.disabled = true;
+                    saveBtn.innerHTML = '<i class="ph-bold ph-spinner-gap ph-spin"></i> Saving...';
+
+                    // Update Profiles table
+                    const { error } = await supabase
+                        .from('profiles')
+                        .upsert({
+                            id: user.id,
+                            full_name: inputName.value,
+                            phone: inputPhone.value,
+                            blood_group: inputBlood.value,
+                            updated_at: new Date()
+                        });
+
+                    if (error) throw error;
+
+                    localStorage.setItem('crisisnav_profile_role', inputRole.value);
+                    displayTitle.textContent = inputName.value || 'User';
+                    displayRole.textContent = inputRole.value || 'User';
+
+                    saveBtn.innerHTML = '<i class="ph-bold ph-check"></i> Saved!';
+                    saveBtn.style.background = '#16a34a';
+                    
+                    setTimeout(() => {
+                        saveBtn.disabled = false;
+                        saveBtn.innerHTML = originalText;
+                        saveBtn.style.background = 'var(--primary-blue)';
+                    }, 2000);
+
+                } catch (err) {
+                    console.error('Update Error:', err.message);
+                    alert('Update Failed: ' + err.message);
+                    saveBtn.disabled = false;
                     saveBtn.innerHTML = originalText;
-                    saveBtn.style.background = 'var(--primary-blue)';
-                }, 2000);
+                }
             });
         });
     </script>

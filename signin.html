@@ -288,7 +288,9 @@
         </main>
     </div>
 
-    <script>
+    <script type="module">
+        import { supabase } from './supabase.js'
+
         const guideTips = {
             'email': 'Enter the email you used to sign up.',
             'password': 'Type your secure password to continue.'
@@ -342,12 +344,34 @@
             }
         });
 
-        document.getElementById('signin-form').addEventListener('submit', (e) => {
+        document.getElementById('signin-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            // Simulate login
-            localStorage.setItem('isLoggedIn', 'true');
-            localStorage.setItem('showLoginToast', 'true');
-            window.location.href = 'index.html';
+            const email = inputs.email.value;
+            const password = inputs.password.value;
+            const submitBtn = e.target.querySelector('button');
+
+            try {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Verifying...';
+
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email,
+                    password
+                });
+
+                if (error) throw error;
+
+                // Success
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('showLoginToast', 'true');
+                window.location.href = 'index.html';
+
+            } catch (err) {
+                console.error('Authentication Error:', err.message);
+                alert('Authentication Failed: ' + err.message);
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Sign In';
+            }
         });
 
         window.addEventListener('DOMContentLoaded', () => {
