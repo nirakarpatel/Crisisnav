@@ -1,6 +1,16 @@
 /* ===========================================================
    Crisis Navigation System – Application Logic
    =========================================================== */
+// ── Auth Guard ───────────────────────────────────────────────
+(function checkAuthGuard() {
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    const path = window.location.pathname.toLowerCase();
+    const isAuthPage = path.includes('signin.html') || path.includes('signup.html');
+
+    if (!isLoggedIn && !isAuthPage) {
+        window.location.href = 'signin.html';
+    }
+})();
 
 // ── State ──────────────────────────────────────────────────
 let state = {
@@ -63,6 +73,7 @@ async function init() {
     initMenu();
     initTheme();
     loadGlobalProfile();
+    checkOnboardingGuide();
 }
 
 // ── Theme Management ──────────────────────────────────────
@@ -441,13 +452,13 @@ function loadGlobalProfile() {
     const authButtons = document.getElementById('auth-buttons');
     const profilePicContainer = document.getElementById('profile-pic');
     
-    if (authButtons && profilePicContainer) {
+    if (profilePicContainer) {
         if (isLoggedIn) {
-            authButtons.style.display = 'none';
             profilePicContainer.style.display = 'block';
+            if (authButtons) authButtons.style.display = 'none';
         } else {
-            authButtons.style.display = 'flex';
             profilePicContainer.style.display = 'none';
+            if (authButtons) authButtons.style.display = 'flex';
         }
     }
 
@@ -619,6 +630,193 @@ function getCategoryLabel(type) {
     if (type === 'info') return 'System Alert';
     return 'General';
 }
+
+// ── Onboarding Guide ───────────────────────────────────────
+function checkOnboardingGuide() {
+    if (localStorage.getItem('showSignupGuide') === 'true') {
+        const onboardModal = document.getElementById('onboard-modal');
+        if (onboardModal) {
+            onboardModal.classList.add('active');
+            localStorage.removeItem('showSignupGuide');
+        }
+    }
+}
+
+// ── Multi-Step Page Tour Engine ──────────────────────────
+class AppTour {
+    constructor(pageName, steps) {
+        this.pageName = pageName;
+        this.steps = steps;
+        this.currentStep = 0;
+        
+        // Run only for new users who haven't completed this page's tour
+        if (localStorage.getItem('isNewUser') !== 'true') return;
+        if (localStorage.getItem('tour_completed_' + pageName) === 'true') return;
+        
+        this.init();
+    }
+    
+    init() {
+        this.overlay = document.createElement('div');
+        this.overlay.className = 'tour-overlay';
+        
+        this.tooltip = document.createElement('div');
+        this.tooltip.className = 'tour-tooltip';
+        this.tooltip.innerHTML = `
+            <div class="tour-tooltip-content">
+                <div class="tour-tooltip-icon"><i class="ph-fill ph-info"></i></div>
+                <div class="tour-tooltip-text">
+                    <h4>Feature Guide</h4>
+                    <p id="tour-message"></p>
+                    <div class="tour-tooltip-footer">
+                        <span class="tour-steps-indicator" id="tour-indicator"></span>
+                        <button class="tour-next-btn" id="tour-next-btn">Next</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(this.overlay);
+        document.body.appendChild(this.tooltip);
+        
+        document.getElementById('tour-next-btn').addEventListener('click', () => this.nextStep());
+        
+        // Wait briefly for page to settle
+        setTimeout(() => this.showStep(), 1200);
+    }
+    
+    showStep() {
+        if (this.currentTarget) {
+            this.currentTarget.classList.remove('tour-target');
+        }
+        
+        if (this.currentStep >= this.steps.length) {
+            this.finish();
+            return;
+        }
+        
+        const step = this.steps[this.currentStep];
+        const elements = document.querySelectorAll(step.selector);
+        this.currentTarget = elements[step.index || 0];
+        
+        if (!this.currentTarget) {
+            // Skip if element not found
+            this.currentStep++;
+            this.showStep();
+            return;
+        }
+        
+        this.overlay.classList.add('active');
+        this.currentTarget.classList.add('tour-target');
+        
+        // Calculate offset to ensure it's comfortably in view
+        const elementRect = this.currentTarget.getBoundingClientRect();
+        const absoluteElementTop = elementRect.top + window.pageYOffset;
+        const middle = absoluteElementTop - (window.innerHeight / 2) + (elementRect.height / 2);
+        window.scrollTo({ top: middle, behavior: 'smooth' });
+        
+        document.getElementById('tour-message').textContent = step.message;
+        document.getElementById('tour-indicator').textContent = `${this.currentStep + 1} of ${this.steps.length}`;
+        document.getElementById('tour-next-btn').textContent = this.currentStep === this.steps.length - 1 ? 'Finish' : 'Next';
+        
+        this.tooltip.classList.remove('visible');
+        
+        setTimeout(() => {
+            const rect = this.currentTarget.getBoundingClientRect();
+            // Default position (bottom)
+            let top = rect.bottom + window.scrollY + 15;
+            let left = rect.left + window.scrollX;
+            
+            // Boundary checks
+            if (left + 280 > window.innerWidth) {
+                left = window.innerWidth - 300;
+            }
+            if (top + 150 > window.scrollY + window.innerHeight) {
+                top = rect.top + window.scrollY - 160; // place above
+            }
+            
+            this.tooltip.style.top = top + 'px';
+            this.tooltip.style.left = Math.max(10, left) + 'px';
+            this.tooltip.classList.add('visible');
+        }, 400);
+    }
+    
+    nextStep() {
+        this.tooltip.classList.remove('visible');
+        this.currentStep++;
+        setTimeout(() => this.showStep(), 300);
+    }
+    
+    finish() {
+        this.overlay.classList.remove('active');
+        this.tooltip.classList.remove('visible');
+        if (this.currentTarget) {
+            this.currentTarget.classList.remove('tour-target');
+        }
+        localStorage.setItem('tour_completed_' + this.pageName, 'true');
+        
+        setTimeout(() => {
+            if (this.overlay.parentNode) this.overlay.remove();
+            if (this.tooltip.parentNode) this.tooltip.remove();
+        }, 400);
+    }
+}
+
+const pageTours = {
+    'index.html': [
+        { selector: '#crisis-search', message: 'Search for any crisis protocol quickly right here.' },
+        { selector: '.category-grid', message: 'Tap a main category to instantly start an emergency workflow.' },
+        { selector: '.steps-section', message: 'View your actively tracked crisis steps and progress here.' },
+        { selector: '#voice-btn', message: 'Use voice commands for hands-free incident reporting.' }
+    ],
+    'my-crises.html': [
+        { selector: '.activity-section', index: 0, message: 'Track your ongoing active emergencies here.' },
+        { selector: '.activity-section', index: 1, message: 'Review your resolved past incidents.' }
+    ],
+    'reports.html': [
+        { selector: '.next-step-btn', message: 'Generate comprehensive PDF reports of your incidents.' },
+        { selector: '.activity-list', message: 'Download previously generated reports.' },
+        { selector: '.steps-section', message: 'Check your year-to-date response analytics.' }
+    ],
+    'settings.html': [
+        { selector: '.setting-group', index: 1, message: 'Configure critical push and audio notifications.' },
+        { selector: '.setting-group', index: 2, message: 'Manage your trusted emergency contacts and location sharing.' }
+    ],
+    'profile.html': [
+        { selector: '.profile-img-container', message: 'Tap here to upload a new profile picture.' },
+        { selector: '#profile-form', message: 'Ensure your personal details and blood group are up to date.' },
+        { selector: '.save-btn', message: 'Save your personal and medical information securely.' }
+    ]
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    let filename = location.pathname.split('/').pop() || 'index.html';
+    // Handle root path mapping 
+    if (filename === '' || filename === '/') filename = 'index.html';
+    
+    if (pageTours[filename]) {
+        // init() is async, so the modal might not have the 'active' class yet during DOMContentLoaded.
+        // We check the raw localStorage key to accurately determine if the welcome modal WILL show.
+        const willShowWelcomeModal = (filename === 'index.html' && localStorage.getItem('showSignupGuide') === 'true');
+
+        if (willShowWelcomeModal) {
+            // The welcome modal will be shown. Wait for the user to close it.
+            const modal = document.getElementById('onboard-modal');
+            if (modal) {
+                const modalBtns = modal.querySelectorAll('button');
+                modalBtns.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        // Small delay to let modal closing animation finish
+                        setTimeout(() => new AppTour(filename, pageTours[filename]), 300);
+                    });
+                });
+            }
+        } else {
+            // Start normally
+            new AppTour(filename, pageTours[filename]);
+        }
+    }
+});
 
 // Start the app
 init();

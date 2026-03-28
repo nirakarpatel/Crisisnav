@@ -11,6 +11,13 @@
     <!-- Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
     <link rel="stylesheet" href="style.css">
+    
+    <!-- Instant Auth Guard -->
+    <script>
+        if (localStorage.getItem('isLoggedIn') !== 'true') {
+            window.location.replace('signin.html');
+        }
+    </script>
 </head>
 <body>
     <div class="menu-overlay" id="menu-overlay"></div>
@@ -48,10 +55,6 @@
                 <h1 class="app-title">Crisis Navigation System</h1>
             </div>
             <div class="header-right">
-<div class="auth-buttons" id="auth-buttons" style="display: none;">
-                    <a href="signin.html" class="btn-signin">Sign In</a>
-                    <a href="signup.html" class="btn-signup">Sign Up</a>
-                </div>
                 <div class="profile-pic" id="profile-pic" style="display: none;">
                     <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&h=100&fit=crop" alt="Profile">
                 </div>
@@ -196,6 +199,46 @@
             <div class="modal-footer">
                 <button id="btn-cancel-rec" class="btn-secondary">Ignore</button>
                 <button id="btn-approve-rec" class="btn-primary">Start Flow</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Onboarding Modal -->
+    <div id="onboard-modal" class="modal-overlay">
+        <div class="modal-content glass-card">
+            <div class="modal-header">
+                <div class="ai-badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
+                    <i class="ph-fill ph-check-circle"></i> Welcome
+                </div>
+                <button onclick="document.getElementById('onboard-modal').classList.remove('active')" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body" style="text-align: center;">
+                <div style="background: linear-gradient(135deg, #10b981, #059669); color: white; width: 64px; height: 64px; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 16px; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);">
+                    <i class="ph-fill ph-hand-waving"></i>
+                </div>
+                <h2 style="font-family: var(--font-heading); margin-bottom: 8px;">You're ready to go!</h2>
+                <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px;">
+                    Welcome to CrisisNav. Here are a few things you can do to get started:
+                </p>
+                <div style="text-align: left; display: flex; flex-direction: column; gap: 12px;">
+                    <div style="display: flex; gap: 12px; align-items: flex-start; background: rgba(59, 130, 246, 0.05); padding: 12px; border-radius: 12px;">
+                        <i class="ph-fill ph-microphone" style="color: var(--primary-blue); font-size: 20px;"></i>
+                        <div>
+                            <strong style="display: block; font-size: 0.9rem;">Voice Commands</strong>
+                            <span style="font-size: 0.8rem; color: var(--text-muted)">Use the glowing mic to report crises hands-free.</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 12px; align-items: flex-start; background: rgba(168, 85, 247, 0.05); padding: 12px; border-radius: 12px;">
+                        <i class="ph-fill ph-briefcase" style="color: #a855f7; font-size: 20px;"></i>
+                        <div>
+                            <strong style="display: block; font-size: 0.9rem;">My Crises</strong>
+                            <span style="font-size: 0.8rem; color: var(--text-muted)">Track active and past incidents from the bottom bar.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="document.getElementById('onboard-modal').classList.remove('active')" class="btn-primary" style="width: 100%;">Get Started</button>
             </div>
         </div>
     </div>

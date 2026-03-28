@@ -201,6 +201,44 @@
             transform: scaleX(1);
             transform-origin: left;
         }
+        .auth-form {
+            position: relative;
+        }
+        .input-wrapper.active-guide {
+            border-color: #10b981;
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
+        }
+        .form-tooltip {
+            position: absolute;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #ffffff;
+            padding: 10px 14px;
+            border-radius: 14px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            pointer-events: none;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            z-index: 15;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.25);
+        }
+        .form-tooltip.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .form-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 18px;
+            border-width: 6px;
+            border-style: solid;
+            border-color: #10b981 transparent transparent transparent;
+        }
     </style>
 </head>
 
@@ -225,6 +263,7 @@
                 <p class="auth-subtitle">Sign in to access your dashboard</p>
 
                 <form class="auth-form" id="signin-form">
+                    <div id="floating-tooltip" class="form-tooltip"></div>
                     <div class="input-group">
                         <label>Email ID</label>
                         <div class="input-wrapper">
@@ -250,12 +289,71 @@
     </div>
 
     <script>
+        const guideTips = {
+            'email': 'Enter the email you used to sign up.',
+            'password': 'Type your secure password to continue.'
+        };
+
+        const tooltip = document.getElementById('floating-tooltip');
+        const inputs = {
+            email: document.querySelector('input[type="email"]'),
+            password: document.querySelector('input[type="password"]')
+        };
+
+        function showTooltip(input, message) {
+            const wrapper = input.closest('.input-wrapper');
+            const group = input.closest('.input-group');
+            document.querySelectorAll('.input-wrapper.active-guide').forEach(el => el.classList.remove('active-guide'));
+            wrapper.classList.add('active-guide');
+            tooltip.textContent = message;
+            tooltip.style.top = (group.offsetTop - 52) + 'px';
+            tooltip.style.left = group.offsetLeft + 'px';
+            tooltip.classList.add('visible');
+        }
+
+        function hideTooltip() {
+            tooltip.classList.remove('visible');
+            document.querySelectorAll('.input-wrapper.active-guide').forEach(el => el.classList.remove('active-guide'));
+        }
+
+        Object.keys(inputs).forEach((key) => {
+            const input = inputs[key];
+            if (!input) return;
+
+            input.addEventListener('focus', () => {
+                showTooltip(input, guideTips[key]);
+            });
+
+            input.addEventListener('blur', () => {
+                setTimeout(() => {
+                    if (document.activeElement.tagName !== 'INPUT') {
+                        hideTooltip();
+                    }
+                }, 80);
+            });
+        });
+
+        window.addEventListener('resize', () => {
+            if (tooltip.classList.contains('visible') && document.activeElement && document.activeElement.tagName === 'INPUT') {
+                const current = document.activeElement;
+                const group = current.closest('.input-group');
+                tooltip.style.top = (group.offsetTop - 52) + 'px';
+                tooltip.style.left = group.offsetLeft + 'px';
+            }
+        });
+
         document.getElementById('signin-form').addEventListener('submit', (e) => {
             e.preventDefault();
             // Simulate login
             localStorage.setItem('isLoggedIn', 'true');
             localStorage.setItem('showLoginToast', 'true');
             window.location.href = 'index.html';
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                inputs.email?.focus();
+            }, 400);
         });
     </script>
 </body>

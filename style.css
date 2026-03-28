@@ -1013,3 +1013,119 @@ body {
 [data-theme="dark"] .voice-indicator {
     background: rgba(59, 130, 246, 0.15);
 }
+
+/* =========================================================
+   App Tour / Guided Onboarding Styles
+   ========================================================= */
+.tour-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(2px);
+    z-index: 9998;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+}
+.tour-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.tour-target {
+    position: relative !important;
+    z-index: 9999 !important;
+    background: var(--white) !important;
+    border-radius: 12px;
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.4), 0 10px 30px rgba(0,0,0,0.3) !important;
+    animation: tour-pulse-highlight 2s infinite;
+    pointer-events: none; /* Let them click "Next" on the tooltip instead */
+}
+
+@keyframes tour-pulse-highlight {
+    0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6), 0 10px 30px rgba(0,0,0,0.3); }
+    70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0), 0 10px 30px rgba(0,0,0,0.3); }
+    100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0), 0 10px 30px rgba(0,0,0,0.3); }
+}
+
+[data-theme="dark"] .tour-target {
+    background: #1e293b !important;
+}
+
+.tour-tooltip {
+    position: absolute;
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    color: var(--white);
+    padding: 20px;
+    border-radius: 16px;
+    width: 280px;
+    z-index: 10000;
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.1);
+    transform: translateY(20px);
+    display: none;
+}
+.tour-tooltip.visible {
+    opacity: 1;
+    transform: translateY(0);
+    display: block;
+}
+
+.tour-tooltip-content {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.tour-tooltip-icon {
+    font-size: 24px;
+    color: #10b981;
+}
+
+.tour-tooltip-text {
+    flex: 1;
+}
+
+.tour-tooltip h4 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+    font-family: var(--font-heading);
+}
+
+.tour-tooltip p {
+    font-size: 0.85rem;
+    color: #cbd5e1;
+    line-height: 1.5;
+    margin-bottom: 16px;
+}
+
+.tour-tooltip-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tour-steps-indicator {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #94a3b8;
+}
+
+.tour-next-btn {
+    background: #10b981;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.tour-next-btn:active {
+    background: #059669;
+}

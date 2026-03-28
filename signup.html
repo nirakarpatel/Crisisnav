@@ -134,6 +134,7 @@
             transition: all 0.3s ease;
             font-family: var(--font-main);
             -webkit-appearance: none;
+            appearance: none;
         }
         .input-wrapper select {
             padding-right: 36px;
@@ -222,6 +223,54 @@
         .section-divider:not(:empty)::after {
             margin-left: .75em;
         }
+
+        /* Animated Tooltip Guide */
+        .auth-form {
+            position: relative;
+        }
+        .input-wrapper.active-guide {
+            border-color: #10b981 !important;
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2) !important;
+            animation: pulse-guide 2s infinite;
+            background: white;
+        }
+        @keyframes pulse-guide {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+            70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+        .form-tooltip {
+            position: absolute;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            pointer-events: none;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+            left: 0;
+            transform: translateY(10px);
+        }
+        .form-tooltip.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .form-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 20px;
+            border-width: 6px;
+            border-style: solid;
+            border-color: #10b981 transparent transparent transparent;
+        }
     </style>
 </head>
 <body>
@@ -245,11 +294,13 @@
                 <p class="auth-subtitle">Join Crisis Navigation to stay safe</p>
                 
                 <form class="auth-form" id="signup-form">
+                    <div id="floating-tooltip" class="form-tooltip"></div>
+                    
                     <div class="input-group">
                         <label>Full Name</label>
                         <div class="input-wrapper">
                             <i class="ph-bold ph-user icon-left"></i>
-                            <input type="text" placeholder="John Doe" required>
+                            <input type="text" id="signup-fname" placeholder="John Doe" required>
                         </div>
                     </div>
                     
@@ -258,14 +309,14 @@
                             <label>Phone Number</label>
                             <div class="input-wrapper">
                                 <i class="ph-bold ph-phone icon-left"></i>
-                                <input type="tel" placeholder="+1234567890" required>
+                                <input type="tel" id="signup-phone" placeholder="+1234567890" required>
                             </div>
                         </div>
                         <div class="input-group">
                             <label>Blood Group</label>
                             <div class="input-wrapper">
                                 <i class="ph-bold ph-drop icon-left" style="color: #ef4444;"></i>
-                                <select required>
+                                <select id="signup-blood" required>
                                     <option value="" disabled selected>Select</option>
                                     <option value="A+">A+</option>
                                     <option value="A-">A-</option>
@@ -285,7 +336,7 @@
                         <label>Email Address</label>
                         <div class="input-wrapper">
                             <i class="ph-bold ph-envelope-simple icon-left"></i>
-                            <input type="email" placeholder="john@example.com" required>
+                            <input type="email" id="signup-email" placeholder="john@example.com" required>
                         </div>
                     </div>
 
@@ -296,14 +347,14 @@
                             <label>Name</label>
                             <div class="input-wrapper">
                                 <i class="ph-bold ph-users icon-left"></i>
-                                <input type="text" placeholder="Jane Doe" required>
+                                <input type="text" id="signup-ec-name" placeholder="Jane Doe" required>
                             </div>
                         </div>
                         <div class="input-group">
                             <label>Phone</label>
                             <div class="input-wrapper">
                                 <i class="ph-bold ph-phone icon-left"></i>
-                                <input type="tel" placeholder="+1234567890" required>
+                                <input type="tel" id="signup-ec-phone" placeholder="+1234567890" required>
                             </div>
                         </div>
                     </div>
@@ -314,7 +365,7 @@
                         <label>Password</label>
                         <div class="input-wrapper">
                             <i class="ph-bold ph-lock-key icon-left"></i>
-                            <input type="password" placeholder="Create a strong password" required minlength="8">
+                            <input type="password" id="signup-password" placeholder="Create a strong password" required minlength="8">
                         </div>
                     </div>
 
@@ -329,11 +380,112 @@
     </div>
 
     <script>
+        // Reset onboarding state for a fresh new-user experience
+        function resetNewUserState() {
+            const preserve = ['crisisnav_theme', 'crisisnav_profile_name', 'crisisnav_profile_role', 'crisisnav_profile_pic', 'crisisnav_activity_logs'];
+            const toRemove = [];
+
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (!key) continue;
+                if (key.startsWith('tour_completed_') || key === 'showSignupGuide' || key === 'showLoginToast' || key === 'isNewUser' || key === 'isLoggedIn') {
+                    toRemove.push(key);
+                }
+            }
+
+            toRemove.forEach(key => localStorage.removeItem(key));
+            localStorage.setItem('isNewUser', 'true');
+            localStorage.setItem('showSignupGuide', 'true');
+            console.log('New user mode enabled: cleared old onboarding state.');
+        }
+
+        resetNewUserState();
+
+        // Interactive Animated Form Guide
+        const guideSteps = [
+            { id: 'signup-fname', message: 'First, what\'s your full name?' },
+            { id: 'signup-phone', message: 'Enter your phone number' },
+            { id: 'signup-blood', message: 'Crucial for medical emergencies' },
+            { id: 'signup-email', message: 'Your email address' },
+            { id: 'signup-ec-name', message: 'Who to contact in an emergency?' },
+            { id: 'signup-ec-phone', message: 'Their phone number' },
+            { id: 'signup-password', message: 'Create a secure password' }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const tooltip = document.getElementById('floating-tooltip');
+            
+            function updateGuideFor(inputElement) {
+                const step = guideSteps.find(s => s.id === inputElement.id);
+                if (!step) return;
+                
+                // Clear active states
+                document.querySelectorAll('.input-wrapper.active-guide').forEach(el => el.classList.remove('active-guide'));
+                
+                const wrapper = inputElement.closest('.input-wrapper');
+                const group = inputElement.closest('.input-group');
+                
+                wrapper.classList.add('active-guide');
+                tooltip.innerHTML = `<i class="ph-fill ph-check-circle"></i> ${step.message}`;
+                
+                // Position tooltip accurately relative to .auth-form
+                tooltip.style.top = (group.offsetTop - 36) + 'px';
+                tooltip.style.left = group.offsetLeft + 'px';
+                tooltip.classList.add('visible');
+                
+                // Ensure it's in view on smaller screens
+                group.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+
+            guideSteps.forEach((step, index) => {
+                const input = document.getElementById(step.id);
+                if(!input) return;
+                
+                // Show tooltip when focusing on input box
+                input.addEventListener('focus', () => {
+                    updateGuideFor(input);
+                });
+
+                // Auto-advance to next box on Enter
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (index < guideSteps.length - 1) {
+                            document.getElementById(guideSteps[index + 1].id).focus();
+                        } else {
+                            // If last input and valid, could try submitting or blurring
+                            input.blur();
+                        }
+                    }
+                });
+
+                // Hide tooltip when moving out of inputs entirely
+                input.addEventListener('blur', () => {
+                    setTimeout(() => {
+                        if (document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'SELECT') {
+                            tooltip.classList.remove('visible');
+                            document.querySelectorAll('.input-wrapper.active-guide').forEach(el => el.classList.remove('active-guide'));
+                        }
+                    }, 50);
+                });
+            });
+
+            // Start guide sequence on first input automatically after slight delay
+            setTimeout(() => {
+                const firstInput = document.getElementById(guideSteps[0].id);
+                if (firstInput) {
+                    firstInput.focus();
+                }
+            }, 800);
+        });
+
         document.getElementById('signup-form').addEventListener('submit', (e) => {
             e.preventDefault();
             // Simulate account creation & login
             localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('showSignupGuide', 'true');
             localStorage.setItem('showLoginToast', 'true');
+            localStorage.setItem('isNewUser', 'true');
             window.location.href = 'index.html';
         });
     </script>
