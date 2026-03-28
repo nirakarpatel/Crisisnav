@@ -143,11 +143,13 @@
             </div>
 
             <!-- Emergency Advice Banner -->
-            <div class="emergency-banner">
-                <div class="banner-icon"><i class="ph-fill ph-warning-octagon"></i></div>
-                <div class="banner-content">
-                    <h2>Follow the steps during emergency</h2>
-                    <p>Remain calm. Do not skip any steps.</p>
+            <div class="setting-card" style="background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%); border: none; color: white; display: flex; align-items: center; gap: 20px;">
+                <div class="setting-icon-box" style="background: rgba(255,255,255,0.2); color: white; width: 60px; height: 60px; font-size: 30px;">
+                    <i class="ph-fill ph-warning-octagon"></i>
+                </div>
+                <div>
+                    <h2 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 4px; font-family: var(--font-heading);">Mission Protocol Active</h2>
+                    <p style="font-size: 0.9rem; opacity: 0.9; font-weight: 500;">Remain calm. Execute instructions with precision.</p>
                 </div>
             </div>
 
@@ -175,44 +177,54 @@
             </section>
 
             <!-- Active Steps Section -->
-            <section class="steps-section" id="active-steps-section">
+            <section class="activity-section">
                 <div class="section-header">
                     <div class="header-info">
-                        <div class="step-count-badge">5</div>
+                        <div class="step-count-badge" style="background: var(--primary-blue); color: white; width:26px; height:26px;">5</div>
                         <div class="header-text">
-                            <h3>Active Steps in Progress</h3>
-                            <p id="current-step-mini">Step 1: verify it when completed</p>
+                            <h3>Active Protocol Progress</h3>
+                            <p id="current-step-mini" style="font-size: 0.8rem; font-weight: 600;">Step 1: Sound the alarm</p>
                         </div>
                     </div>
-                    <button class="more-btn"><i class="ph-bold ph-dots-three-outline"></i></button>
                 </div>
 
-                <div class="steps-list" id="steps-list">
-                    <!-- Steps will be injected here -->
-                    <div class="step-item active">
-                        <div class="step-status"><i class="ph-fill ph-fire"></i></div>
-                        <div class="step-body">
-                            <h4>1 Sound the alarm & evacuate the area;</h4>
-                            <p>Then call the fire dept..</p>
+                <div class="setting-card" id="active-protocol-card">
+                    <div class="setting-item" style="border-bottom: 1px solid rgba(0,0,0,0.05);">
+                        <div class="setting-info">
+                            <div class="setting-icon-box"><i class="ph-fill ph-fire"></i></div>
+                            <div class="setting-text">
+                                <h4>1 Sound the alarm & evacuate</h4>
+                                <p>Then call the fire department immediately.</p>
+                            </div>
                         </div>
-                        <div class="step-check completed"><i class="ph-bold ph-check"></i></div>
-                    </div>
-                    <div class="step-item">
-                        <div class="step-status warning"><i class="ph-fill ph-warning-octagon"></i></div>
-                        <div class="step-body">
-                            <h4>2 No injuries? Close the gas valves;</h4>
-                            <p>Use an extinguisher from safe distance</p>
+                        <div class="step-check completed" style="background: #10b981; color: white; width:28px; height:28px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <i class="ph-bold ph-check" style="font-size: 14px;"></i>
                         </div>
-                        <div class="step-check"><div class="check-box"></div></div>
                     </div>
-                    <div class="step-item">
-                        <div class="step-status info"><i class="ph-fill ph-drop"></i></div>
-                        <div class="step-body">
-                            <h4>3 Don't use elevators</h4>
-                            <p>Use only the stairs</p>
+
+                    <div class="setting-item" style="border-bottom: 1px solid rgba(0,0,0,0.05);">
+                        <div class="setting-info">
+                            <div class="setting-icon-box" style="background: rgba(245, 158, 11, 0.1); color: var(--accident);"><i class="ph-fill ph-warning-octagon"></i></div>
+                            <div class="setting-text">
+                                <h4>2 Close the gas valves</h4>
+                                <p>If safe, isolate the fuel source.</p>
+                            </div>
                         </div>
-                        <div class="step-check"><div class="check-box"></div></div>
+                        <div style="width:24px; height:24px; border: 2px solid #cbd5e1; border-radius: 50%;"></div>
                     </div>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <div class="setting-icon-box" style="background: rgba(6, 182, 212, 0.1); color: var(--chemical);"><i class="ph-fill ph-stairs"></i></div>
+                            <div class="setting-text">
+                                <h4>3 Use the emergency stairs</h4>
+                                <p>Avoid all elevators during the alarm.</p>
+                            </div>
+                        </div>
+                        <div style="width:24px; height:24px; border: 2px solid #cbd5e1; border-radius: 50%;"></div>
+                    </div>
+                </div>
+            </section>
                 </div>
 
                 <button class="next-step-btn" id="next-step-btn">

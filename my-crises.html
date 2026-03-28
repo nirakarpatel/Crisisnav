@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
     <!-- Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
+    <link rel="stylesheet" href="style.css">
     <meta name="theme-color" content="#3b82f6">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="assets/logo.png">
@@ -118,16 +119,20 @@
             <section class="activity-section">
                 <div class="section-header">
                     <h3>Active Emergencies</h3>
-                    <div class="step-count-badge" style="width:24px;height:24px;font-size:0.8rem">1</div>
+                    <div class="step-count-badge" style="background: var(--fire); color: white; width:26px; height:26px;">1</div>
                 </div>
                 <div class="activity-list">
-                    <div class="activity-item" style="padding: 12px; border: 1px solid #3b82f644; border-radius: 12px; background: #fff; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);">
-                        <div class="activity-icon fire"><i class="ph-fill ph-fire"></i></div>
-                        <div class="activity-content">
-                            <p style="font-size: 1rem; font-weight: 700; margin-bottom: 4px;">Building Fire</p>
-                            <span style="color: var(--fire); font-weight: 600;">Status: Evacuating</span>
+                    <div class="setting-card haptic-btn" style="border-left: 4px solid var(--fire); background: rgba(239, 68, 68, 0.05);">
+                        <div class="setting-item" style="border: none; padding: 0;">
+                            <div class="setting-info">
+                                <div class="setting-icon-box" style="background: var(--fire); color: white;"><i class="ph-fill ph-fire"></i></div>
+                                <div class="setting-text">
+                                    <h4>Building Fire</h4>
+                                    <p style="color: var(--fire); font-weight: 700;">Status: Mandatory Evacuation</p>
+                                </div>
+                            </div>
+                            <button class="icon-btn" style="color: var(--fire);"><i class="ph-bold ph-caret-right"></i></button>
                         </div>
-                        <button class="more-btn"><i class="ph-bold ph-caret-right"></i></button>
                     </div>
                 </div>
             </section>
@@ -135,31 +140,33 @@
             <!-- Past Crises -->
             <section class="activity-section">
                 <div class="section-header">
-                    <h3>Past Incidents</h3>
+                    <h3>Incident Archive</h3>
                 </div>
                 <div class="activity-list">
                     <!-- Past Incident 1 -->
-                    <div class="activity-item">
-                        <div class="activity-icon" style="background: var(--medical);"><i class="ph-fill ph-heartbeat"></i></div>
-                        <div class="activity-content">
-                            <p>Medical Emergency - Floor 3</p>
-                            <span>Resolved • Oct 12, 2023</span>
+                    <div class="setting-card">
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-icon-box" style="background: var(--medical); color: white;"><i class="ph-fill ph-heartbeat"></i></div>
+                                <div class="setting-text">
+                                    <h4>Medical Emergency - Room 302</h4>
+                                    <p>Resolved successfully • Oct 12, 2023</p>
+                                </div>
+                            </div>
+                            <i class="ph-bold ph-check-circle" style="color: #10b981; font-size: 20px;"></i>
                         </div>
                     </div>
                     <!-- Past Incident 2 -->
-                    <div class="activity-item">
-                        <div class="activity-icon" style="background: var(--chemical);"><i class="ph-fill ph-flask"></i></div>
-                        <div class="activity-content">
-                            <p>Chemical Spill - Lab B</p>
-                            <span>Resolved • Sep 04, 2023</span>
-                        </div>
-                    </div>
-                    <!-- Past Incident 3 -->
-                    <div class="activity-item">
-                        <div class="activity-icon" style="background: var(--accident);"><i class="ph-fill ph-car-profile"></i></div>
-                        <div class="activity-content">
-                            <p>Vehicle Collision - Parking</p>
-                            <span>Resolved • May 22, 2023</span>
+                    <div class="setting-card">
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-icon-box" style="background: var(--chemical); color: white;"><i class="ph-fill ph-flask"></i></div>
+                                <div class="setting-text">
+                                    <h4>Chemical Spill - Laboratory B</h4>
+                                    <p>Resolved by Hazmat • Sep 04, 2023</p>
+                                </div>
+                            </div>
+                            <i class="ph-bold ph-check-circle" style="color: #10b981; font-size: 20px;"></i>
                         </div>
                     </div>
                 </div>

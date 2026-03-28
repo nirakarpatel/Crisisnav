@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
     <!-- Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
+    <link rel="stylesheet" href="style.css">
     <meta name="theme-color" content="#3b82f6">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="assets/logo.png">
@@ -195,43 +196,51 @@
 
         <!-- Main Content -->
         <main class="app-main">
-            <div class="profile-header">
-                <div class="profile-img-container" id="upload-trigger">
-                    <img id="profile-preview" src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&h=100&fit=crop" alt="Profile">
-                    <div class="upload-icon"><i class="ph-bold ph-camera"></i></div>
+            <div class="setting-card profile-hero-card" style="text-align: center; padding: 40px 20px;">
+                <div class="profile-img-container" id="upload-trigger" style="margin: 0 auto 20px; width: 120px; height: 120px; position: relative; cursor: pointer; border: 4px solid var(--white); box-shadow: var(--shadow-deep); border-radius: 30px; overflow: hidden;">
+                    <img id="profile-preview" src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=200&h=200&fit=crop" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">
+                    <div class="upload-icon" style="position: absolute; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; opacity: 0; transition: 0.3s; color: white; font-size: 24px;">
+                        <i class="ph-bold ph-camera"></i>
+                    </div>
                 </div>
                 <input type="file" id="file-upload" style="display: none;" accept="image/*">
                 
-                <h2 id="profile-name-display">Alex Carter</h2>
-                <p id="profile-role-display">User</p>
+                <h2 id="profile-name-display" style="font-size: 1.5rem; font-weight: 800; color: var(--text-dark); margin-bottom: 4px;">User Name</h2>
+                <p id="profile-role-display" style="font-size: 0.9rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Crisis Responder</p>
             </div>
 
-            <form id="profile-form" class="profile-details" style="padding: 24px 20px;">
-                <div class="form-group">
-                    <label class="form-label">Full Name</label>
-                    <input type="text" id="input-name" class="form-input" placeholder="Enter your full name">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Role</label>
-                    <input type="text" id="input-role" class="form-input" placeholder="Enter your role">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Email</label>
-                    <input type="email" id="input-email" class="form-input" placeholder="Enter your email" readonly>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Phone</label>
-                    <input type="tel" id="input-phone" class="form-input" placeholder="Enter your phone number">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Blood Group</label>
-                    <input type="text" id="input-blood" class="form-input" placeholder="Enter your blood group">
-                </div>
+            <div class="setting-card">
+                <span class="setting-card-title">Identity Details</span>
+                <form id="profile-form" class="profile-details">
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label class="form-label" style="display: block; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Full Name</label>
+                        <input type="text" id="input-name" class="form-input" placeholder="Enter your full name" style="width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.1); font-family: var(--font-main); font-size: 0.95rem;">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label class="form-label" style="display: block; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Operational Role</label>
+                        <input type="text" id="input-role" class="form-input" placeholder="Enter your role" style="width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.1); font-family: var(--font-main); font-size: 0.95rem;">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label class="form-label" style="display: block; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Secure Email</label>
+                        <input type="email" id="input-email" class="form-input" placeholder="Enter your email" readonly style="width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.1); background: #f8fafc; color: #94a3b8; font-family: var(--font-main); font-size: 0.95rem;">
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
+                        <div class="form-group">
+                            <label class="form-label" style="display: block; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Phone</label>
+                            <input type="tel" id="input-phone" class="form-input" placeholder="+1..." style="width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.1); font-family: var(--font-main); font-size: 0.95rem;">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" style="display: block; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Blood Group</label>
+                            <input type="text" id="input-blood" class="form-input" placeholder="O+" style="width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.1); font-family: var(--font-main); font-size: 0.95rem;">
+                        </div>
+                    </div>
 
-                <button type="submit" class="save-btn">
-                    <i class="ph-bold ph-floppy-disk"></i> Save Changes
-                </button>
-            </form>
+                    <button type="submit" class="save-btn haptic-btn" style="width: 100%; background: var(--primary-blue); color: white; border: none; padding: 16px; border-radius: 16px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; box-shadow: var(--shadow-glow);">
+                        <i class="ph-bold ph-floppy-disk"></i> Synchronize Profile
+                    </button>
+                </form>
+            </div>
         </main>
 
         <!-- Bottom Tab Bar -->
