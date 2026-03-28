@@ -791,7 +791,7 @@ function loadGlobalProfile() {
     // Load Photo
     const savedPic = localStorage.getItem('crisisnav_profile_pic');
     if (savedPic) {
-        document.querySelectorAll('.profile-pic img').forEach(img => {
+        document.querySelectorAll('.profile-pic img, .menu-user-avatar img').forEach(img => {
             img.src = savedPic;
         });
     }
@@ -805,15 +805,13 @@ function loadGlobalProfile() {
     }
 
     // Load Role
-    const savedRole = localStorage.getItem('crisisnav_profile_role');
-    if (savedRole) {
-        document.querySelectorAll('.profile-display-role').forEach(el => {
-            el.textContent = savedRole;
-        });
-    }
+    const savedRole = localStorage.getItem('crisisnav_profile_role') || 'Crisis Responder';
+    document.querySelectorAll('.profile-display-role').forEach(el => {
+        el.textContent = savedRole;
+    });
 
     // Make profile pics navigate to profile.html
-    document.querySelectorAll('.profile-pic').forEach(pic => {
+    document.querySelectorAll('.profile-pic, .menu-user-info').forEach(pic => {
         pic.style.cursor = 'pointer';
         pic.onclick = () => {
             window.location.href = 'profile.html';
@@ -1140,6 +1138,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// Loader logic
+function hideLoader() {
+    const loader = document.getElementById('loading-overlay');
+    if (loader) {
+        loader.classList.add('fade-out');
+        setTimeout(() => {
+            loader.style.display = 'none';
+        }, 600);
+    }
+}
+
 // Start the app
 init();
 loadSessionActivity();
+
+// Hide loader after short delay for better transition
+window.addEventListener('load', () => {
+    setTimeout(hideLoader, 500);
+});

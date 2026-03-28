@@ -10,7 +10,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
     <!-- Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
-    <link rel="stylesheet" href="style.css">
+    <meta name="theme-color" content="#3b82f6">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="assets/logo.png">
+
+    <!-- PWA Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(reg => console.log('Service Worker Registered'))
+                    .catch(err => console.log('Service Worker Registration Failed:', err));
+            });
+        }
+    </script>
     
     <style>
         .profile-header {
@@ -118,12 +131,33 @@
     </style>
 </head>
 <body>
+    <!-- Loading Overlay -->
+    <div id="loading-overlay">
+        <div class="loader-content">
+            <img src="assets/logo.png" class="loader-logo" alt="CrisisNav Logo">
+            <div class="loader-progress-container">
+                <div class="loader-progress-bar"></div>
+            </div>
+            <div class="loader-status">System Initializing...</div>
+        </div>
+    </div>
+
     <div class="menu-overlay" id="menu-overlay"></div>
     <div class="side-menu" id="side-menu">
         <div class="menu-header">
             <div class="menu-logo">
                 <i class="ph-fill ph-shield-check"></i>
                 <h2>CrisisNav</h2>
+            </div>
+
+            <div class="menu-user-info">
+                <div class="menu-user-avatar">
+                    <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&h=100&fit=crop" alt="Avatar" class="profile-pic-img">
+                </div>
+                <div class="menu-user-details">
+                    <h3 class="profile-display-name">User</h3>
+                    <p class="profile-display-role">Crisis Responder</p>
+                </div>
             </div>
         </div>
         <div class="menu-links">
@@ -257,6 +291,7 @@
             localStorage.setItem('isLoggedIn', 'true');
 
             const user = session.user;
+            const metadata = user.user_metadata || {};
             inputEmail.value = user.email;
 
             // 2. Load Profile Data
@@ -271,25 +306,27 @@
                     console.warn('Profile fetch error:', error.message);
                 }
 
+                // Sync Strategy: Profile DB Table > Google Metadata > Default
+                const fullName = profile?.full_name || metadata.full_name || '';
+                const avatarUrl = profile?.avatar_url || metadata.avatar_url || localStorage.getItem('crisisnav_profile_pic');
+                
+                inputName.value = fullName;
+                displayTitle.textContent = fullName || 'User';
+                
                 if (profile) {
-                    inputName.value = profile.full_name || '';
-                    displayTitle.textContent = profile.full_name || 'User';
                     inputPhone.value = profile.phone || '';
                     inputBlood.value = profile.blood_group || '';
                 }
 
-                // Handle Profile Pic & Role (Local storage for simplicity in this prototype)
-                const pic = localStorage.getItem('crisisnav_profile_pic');
-                if (pic) {
-                    profilePreview.src = pic;
-                    if (headerProfilePic) headerProfilePic.src = pic;
+                if (avatarUrl) {
+                    profilePreview.src = avatarUrl;
+                    if (headerProfilePic) headerProfilePic.src = avatarUrl;
+                    localStorage.setItem('crisisnav_profile_pic', avatarUrl);
                 }
 
-                const role = localStorage.getItem('crisisnav_profile_role');
-                if (role) {
-                    inputRole.value = role;
-                    displayRole.textContent = role;
-                }
+                const role = localStorage.getItem('crisisnav_profile_role') || 'Crisis Responder';
+                inputRole.value = role;
+                displayRole.textContent = role;
             };
 
             await loadProfileData();
@@ -365,6 +402,21 @@
                     saveBtn.innerHTML = originalText;
                 }
             });
+        });
+
+        // Loader logic
+        function hideLoader() {
+            const loader = document.getElementById('loading-overlay');
+            if (loader) {
+                loader.classList.add('fade-out');
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                }, 600);
+            }
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(hideLoader, 600);
         });
     </script>
 </body>

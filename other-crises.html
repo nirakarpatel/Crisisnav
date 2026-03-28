@@ -10,7 +10,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
     <!-- Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
-    <link rel="stylesheet" href="style.css">
+    <meta name="theme-color" content="#3b82f6">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="assets/logo.png">
+
+    <!-- PWA Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(reg => console.log('Service Worker Registered'))
+                    .catch(err => console.log('Service Worker Registration Failed:', err));
+            });
+        }
+    </script>
     <style>
         .knowledge-container {
             padding: 24px 16px;
@@ -130,6 +143,16 @@
                 <i class="ph-fill ph-shield-check"></i>
                 <h2>CrisisNav</h2>
             </div>
+
+            <div class="menu-user-info">
+                <div class="menu-user-avatar">
+                    <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&h=100&fit=crop" alt="Avatar" class="profile-pic-img">
+                </div>
+                <div class="menu-user-details">
+                    <h3 class="profile-display-name">User</h3>
+                    <p class="profile-display-role">Crisis Responder</p>
+                </div>
+            </div>
         </div>
         <div class="menu-links">
             <a href="index.html" class="menu-link"><i class="ph-bold ph-house"></i> Home</a>
@@ -140,6 +163,17 @@
         </div>
         <div class="menu-footer">
             <a href="#" class="logout-btn"><i class="ph-bold ph-sign-out"></i> Log Out</a>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay">
+        <div class="loader-content">
+            <img src="assets/logo.png" class="loader-logo" alt="CrisisNav Logo">
+            <div class="loader-progress-container">
+                <div class="loader-progress-bar"></div>
+            </div>
+            <div class="loader-status">System Initializing...</div>
         </div>
     </div>
 

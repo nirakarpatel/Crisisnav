@@ -11,6 +11,20 @@
     <!-- Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
     <link rel="stylesheet" href="style.css">
+    <meta name="theme-color" content="#3b82f6">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="assets/logo.png">
+
+    <!-- PWA Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(reg => console.log('Service Worker Registered'))
+                    .catch(err => console.log('Service Worker Registration Failed:', err));
+            });
+        }
+    </script>
     
     <script type="module">
         import { supabase } from './supabase.js'
@@ -25,11 +39,17 @@
             
             // UI Polishing: Show Profile Pic & Handle User Info
             const user = session.user;
+            const metadata = user.user_metadata || {};
             const profilePicDiv = document.getElementById('profile-pic');
+            
+            if (metadata.full_name) {
+                localStorage.setItem('crisisnav_profile_name', metadata.full_name);
+            }
+
             if (profilePicDiv) {
                 profilePicDiv.style.display = 'flex';
                 // If user has a Google avatar, use it
-                const googleAvatar = user.user_metadata?.avatar_url;
+                const googleAvatar = metadata.avatar_url;
                 if (googleAvatar) {
                     profilePicDiv.querySelector('img').src = googleAvatar;
                     localStorage.setItem('crisisnav_profile_pic', googleAvatar);
@@ -49,12 +69,33 @@
     </script>
 </head>
 <body>
+    <!-- Loading Overlay -->
+    <div id="loading-overlay">
+        <div class="loader-content">
+            <img src="assets/logo.png" class="loader-logo" alt="CrisisNav Logo">
+            <div class="loader-progress-container">
+                <div class="loader-progress-bar"></div>
+            </div>
+            <div class="loader-status">System Initializing...</div>
+        </div>
+    </div>
+
     <div class="menu-overlay" id="menu-overlay"></div>
     <div class="side-menu" id="side-menu">
         <div class="menu-header">
             <div class="menu-logo">
                 <i class="ph-fill ph-shield-check"></i>
                 <h2>CrisisNav</h2>
+            </div>
+            
+            <div class="menu-user-info">
+                <div class="menu-user-avatar">
+                    <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&h=100&fit=crop" alt="Avatar" class="profile-pic-img">
+                </div>
+                <div class="menu-user-details">
+                    <h3 class="profile-display-name">User</h3>
+                    <p class="profile-display-role">Crisis Responder</p>
+                </div>
             </div>
         </div>
         <div class="menu-links">

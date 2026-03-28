@@ -13,7 +13,20 @@
         rel="stylesheet">
     <!-- Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
-    <link rel="stylesheet" href="style.css">
+    <meta name="theme-color" content="#3b82f6">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="assets/logo.png">
+
+    <!-- PWA Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(reg => console.log('Service Worker Registered'))
+                    .catch(err => console.log('Service Worker Registration Failed:', err));
+            });
+        }
+    </script>
     <style>
         .app-container {
             position: relative;
@@ -294,6 +307,17 @@
 </head>
 
 <body>
+    <!-- Loading Overlay -->
+    <div id="loading-overlay">
+        <div class="loader-content">
+            <img src="assets/logo.png" class="loader-logo" alt="CrisisNav Logo">
+            <div class="loader-progress-container">
+                <div class="loader-progress-bar"></div>
+            </div>
+            <div class="loader-status">System Initializing...</div>
+        </div>
+    </div>
+
     <div class="app-container">
         <!-- Decorative Background Entities -->
         <div class="decorator decorator-1"></div>
@@ -444,6 +468,21 @@
                 console.error('Google Auth Error:', error.message);
                 alert('Google Sign-In Failed: ' + error.message);
             }
+        });
+
+        // Loader logic
+        function hideLoader() {
+            const loader = document.getElementById('loading-overlay');
+            if (loader) {
+                loader.classList.add('fade-out');
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                }, 600);
+            }
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(hideLoader, 600);
         });
 
         window.addEventListener('DOMContentLoaded', () => {
