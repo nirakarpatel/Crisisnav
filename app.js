@@ -545,12 +545,26 @@ function initEvents() {
                 
                 voiceModal.querySelector('.mic-pulse-ring').style.animation = 'none';
                 
-                const keywords = ['fire', 'आग', 'ag', 'আগুন', 'ti', 'തീ', 'ಬೆಂ'];
-                const isFire = keywords.some(k => transcript.includes(k));
+                // Comprehensive Multi-category Keywords
+                const keywordMap = {
+                    fire: ['fire', 'आग', 'ag', 'আগুন', 'ti', 'തീ', 'ಬೆಂ', 'ନିଆଁ', 'ਅੱਗ', 'জুই', 'आगि', 'अग्नि', 'آگ', 'burning', 'smoke', 'fire in'],
+                    accident: ['accident', 'दुर्घटना', 'crash', 'collision', 'ప్రమాదం', 'अपघात', 'విబத்து', 'حادثہ', 'અકસ્માત', 'അපകടം', 'દુର୍ଘଟଣା', 'ਹਾਦਸਾ', 'accident'],
+                    medical: ['medical', 'hospital', 'doctor', 'heart', 'चिकित्सा', 'వైద్యకీయ', 'तबीबी', 'ವೈದ್ಯಕೀಯ', 'മെഡിക്കൽ', 'मदद', 'help', 'emergency'],
+                    chemical: ['chemical', 'leak', 'gas', 'gas leak', 'poison', 'রাসায়নিক', 'ലിക്', 'ಸೋರಿಕೆ', 'toxic']
+                };
+
+                let matchedCrisis = null;
+                for (const [crisisId, words] of Object.entries(keywordMap)) {
+                    if (words.some(word => transcript.includes(word))) {
+                        matchedCrisis = crisisId;
+                        break;
+                    }
+                }
                 
-                if (isFire) {
+                if (matchedCrisis) {
                     voiceModal.querySelector('.mic-pulse-ring > div').style.background = '#10b981';
                     voiceModal.querySelector('.mic-pulse-ring > div').style.boxShadow = '0 0 20px rgba(16, 185, 129, 0.5)';
+                    
                     setTimeout(() => {
                         voiceModal.classList.remove('active');
                         // Restore state
@@ -561,12 +575,12 @@ function initEvents() {
                             voiceModal.querySelector('.mic-pulse-ring > div').style.boxShadow = '0 0 20px rgba(59, 130, 246, 0.5)';
                         }, 300);
                         
-                        // Action: Enable vocal UI globally and start fire crisis
+                        // Action: Enable vocal UI globally and start the detected crisis
                         window.voiceActivated = true;
                         if (window.location.pathname.includes('index.html') || window.location.pathname.endsWith('/')) {
-                            startCrisis('fire');
+                            startCrisis(matchedCrisis);
                         } else {
-                            window.location.href = 'index.html?crisis=fire&voice=true';
+                            window.location.href = `index.html?crisis=${matchedCrisis}&voice=true`;
                         }
                     }, 1200);
                 } else {
