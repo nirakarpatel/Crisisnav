@@ -474,13 +474,82 @@ function initEvents() {
     // Navigation Events
     document.querySelectorAll('.app-nav .nav-item').forEach(navBtn => {
         navBtn.addEventListener('click', (e) => {
-            const spanText = navBtn.querySelector('span')?.textContent.trim();
-            if (spanText === 'Home') window.location.href = 'index.html';
-            else if (spanText === 'My Crisis') window.location.href = 'my-crises.html';
-            else if (spanText === 'Reports') window.location.href = 'reports.html';
-            else if (spanText === 'Settings') window.location.href = 'settings.html';
+            const spanEl = navBtn.querySelector('span');
+            if (!spanEl) return;
+            
+            const i18nKey = spanEl.getAttribute('data-i18n');
+            const spanText = spanEl.textContent.trim();
+            
+            if (i18nKey === 'nav_home' || spanText === 'Home') window.location.href = 'index.html';
+            else if (i18nKey === 'nav_my_crisis' || spanText === 'My Crisis') window.location.href = 'my-crises.html';
+            else if (i18nKey === 'nav_reports' || spanText === 'Reports') window.location.href = 'reports.html';
+            else if (i18nKey === 'nav_settings' || spanText === 'Settings') window.location.href = 'settings.html';
+            // Also handle profile from bottom nav if clicked (for profile.html)
+            else if (i18nKey === 'nav_profile' || spanText === 'Profile') window.location.href = 'profile.html';
         });
     });
+
+    // Voice Modal Logic
+    if (dom.voiceBtn) {
+        dom.voiceBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Create modal if not exists
+            let voiceModal = document.getElementById('voice-listening-modal');
+            if (!voiceModal) {
+                const modalHTML = `
+                    <div id="voice-listening-modal" class="modal-overlay" style="z-index: 10000; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);">
+                        <div style="text-align: center; color: white;">
+                            <div class="mic-pulse-ring" style="width: 100px; height: 100px; background: rgba(59, 130, 246, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; animation: pulse-ring 1.5s infinite ease-out;">
+                                <div style="width: 60px; height: 60px; background: var(--primary-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);">
+                                    <i class="ph-fill ph-microphone"></i>
+                                </div>
+                            </div>
+                            <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 8px;" data-i18n="mic_listening">Listening...</h2>
+                            <p style="font-size: 0.9rem; color: rgba(255,255,255,0.7);" data-i18n="mic_instruction">Speak your command clearly</p>
+                        </div>
+                    </div>
+                    <style>
+                        @keyframes pulse-ring {
+                            0% { transform: scale(0.8); opacity: 0.5; }
+                            100% { transform: scale(1.5); opacity: 0; }
+                        }
+                    </style>
+                `;
+                document.body.insertAdjacentHTML('beforeend', modalHTML);
+                voiceModal = document.getElementById('voice-listening-modal');
+                
+                // Re-apply translations if i18n is available
+                if (typeof applyTranslations === 'function') {
+                    applyTranslations();
+                } else {
+                    document.dispatchEvent(new Event('languageChanged'));
+                }
+            }
+            
+            voiceModal.classList.add('active');
+            
+            // Mock completion after 3 seconds
+            setTimeout(() => {
+                const heading = voiceModal.querySelector('h2');
+                const origText = heading.textContent;
+                heading.textContent = "Command Processed!";
+                voiceModal.querySelector('.mic-pulse-ring').style.animation = 'none';
+                voiceModal.querySelector('.mic-pulse-ring > div').style.background = '#10b981';
+                voiceModal.querySelector('.mic-pulse-ring > div').style.boxShadow = '0 0 20px rgba(16, 185, 129, 0.5)';
+                
+                setTimeout(() => {
+                    voiceModal.classList.remove('active');
+                    // Reset
+                    setTimeout(() => {
+                        heading.textContent = origText;
+                        voiceModal.querySelector('.mic-pulse-ring').style.animation = 'pulse-ring 1.5s infinite ease-out';
+                        voiceModal.querySelector('.mic-pulse-ring > div').style.background = 'var(--primary-blue)';
+                        voiceModal.querySelector('.mic-pulse-ring > div').style.boxShadow = '0 0 20px rgba(59, 130, 246, 0.5)';
+                    }, 300);
+                }, 1000);
+            }, 3000);
+        });
+    }
 
     // Sidebar Tour Trigger
     const btnTutorial = document.getElementById('btn-start-tutorial');
@@ -496,6 +565,13 @@ function initEvents() {
         e.preventDefault();
         startTour();
     };
+
+    // Global listener for side menu close button (injected via HTML later)
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('.close-menu-btn')) {
+            document.body.classList.remove('menu-open');
+        }
+    });
 }
 
 

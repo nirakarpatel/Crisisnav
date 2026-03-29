@@ -99,7 +99,8 @@
 
             <div class="menu-overlay" id="menu-overlay"></div>
             <div class="side-menu" id="side-menu">
-                <div class="menu-header">
+                <div class="menu-header" style="position: relative;">
+                    <button class="close-menu-btn icon-btn" style="position: absolute; right: 0; top: 0; background: transparent; color: var(--text-muted); border: none; font-size: 1.25rem; cursor: pointer; padding: 4px;"><i class="ph-bold ph-x"></i></button>
                     <div class="menu-logo">
                         <i class="ph-fill ph-shield-check"></i>
                         <h2>CrisisNav</h2>
@@ -119,20 +120,20 @@
                     <a href="my-crises.html" class="menu-link"><i class="ph-bold ph-briefcase"></i> <span data-i18n="nav_my_crisis">My Crises</span></a>
                     <a href="reports.html" class="menu-link"><i class="ph-bold ph-file-text"></i> <span data-i18n="nav_reports">Reports</span></a>
                     <a href="settings.html" class="menu-link"><i class="ph-bold ph-gear"></i> <span data-i18n="nav_settings">Settings</span></a>
-                    <a href="profile.html" class="menu-link active"><i class="ph-bold ph-user-circle"></i> Profile</a>
+                    <a href="profile.html" class="menu-link active"><i class="ph-bold ph-user-circle"></i> <span data-i18n="nav_profile">Profile</span></a>
                     <a href="#" class="menu-link" id="btn-start-tutorial" style="border-top: 1px solid rgba(0,0,0,0.05); margin-top: 8px; padding-top: 12px; color: #10b981;">
-                        <i class="ph-bold ph-magic-wand"></i> Quick Tutorial
+                        <i class="ph-bold ph-magic-wand"></i> <span data-i18n="nav_tutorial">Quick Tutorial</span>
                     </a>
                 </div>
                 <div class="menu-recent-activity">
-                    <h3>Recent System Activity</h3>
+                    <h3 data-i18n="nav_activity">Recent System Activity</h3>
                     <div id="sidebar-activity-list" class="sidebar-activity-list">
                         <!-- Activities will be injected here by JS -->
-                        <div class="sidebar-activity-placeholder">No activities recorded in this session</div>
+                        <div class="sidebar-activity-placeholder" data-i18n="nav_no_activity">No activities recorded in this session</div>
                     </div>
                 </div>
                 <div class="menu-footer">
-                    <a href="#" class="logout-btn"><i class="ph-bold ph-sign-out"></i> Log Out</a>
+                    <a href="#" class="logout-btn"><i class="ph-bold ph-sign-out"></i> <span data-i18n="nav_logout">Log Out</span></a>
                 </div>
             </div>
 
