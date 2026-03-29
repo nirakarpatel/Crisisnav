@@ -83,10 +83,10 @@
                     </div>
                 </div>
                 <div class="menu-links">
-                    <a href="index.html" class="menu-link"><i class="ph-bold ph-house"></i> Home</a>
-                    <a href="my-crises.html" class="menu-link active"><i class="ph-bold ph-briefcase"></i> My Crises</a>
-                    <a href="reports.html" class="menu-link"><i class="ph-bold ph-file-text"></i> Reports</a>
-                    <a href="settings.html" class="menu-link"><i class="ph-bold ph-gear"></i> Settings</a>
+                    <a href="index.html" class="menu-link"><i class="ph-bold ph-house"></i> <span data-i18n="nav_home">Home</span></a>
+                    <a href="my-crises.html" class="menu-link active"><i class="ph-bold ph-briefcase"></i> <span data-i18n="nav_my_crisis">My Crises</span></a>
+                    <a href="reports.html" class="menu-link"><i class="ph-bold ph-file-text"></i> <span data-i18n="nav_reports">Reports</span></a>
+                    <a href="settings.html" class="menu-link"><i class="ph-bold ph-gear"></i> <span data-i18n="nav_settings">Settings</span></a>
                     <a href="profile.html" class="menu-link"><i class="ph-bold ph-user-circle"></i> Profile</a>
                     <a href="#" class="menu-link" id="btn-start-tutorial" style="border-top: 1px solid rgba(0,0,0,0.05); margin-top: 8px; padding-top: 12px; color: #10b981;">
                         <i class="ph-bold ph-magic-wand"></i> Quick Tutorial
@@ -183,12 +183,12 @@
         <nav class="app-nav">
             <button class="nav-item">
                 <i class="ph-bold ph-house"></i>
-                <span>Home</span>
+                <span data-i18n="nav_home">Home</span>
             </button>
             <button class="nav-item active">
                 <div class="nav-badge">1</div>
                 <i class="ph-fill ph-briefcase"></i>
-                <span>My Crisis</span>
+                <span data-i18n="nav_my_crisis">My Crisis</span>
             </button>
             <button id="voice-btn" class="nav-mic-btn">
                 <div class="mic-inner">
@@ -197,11 +197,11 @@
             </button>
             <button class="nav-item">
                 <i class="ph-bold ph-file-text"></i>
-                <span>Reports</span>
+                <span data-i18n="nav_reports">Reports</span>
             </button>
             <button class="nav-item">
                 <i class="ph-bold ph-gear"></i>
-                <span>Settings</span>
+                <span data-i18n="nav_settings">Settings</span>
             </button>
         </nav>
     </div>
@@ -227,5 +227,6 @@
     </div>
 
     <script src="app.js"></script>
+    <script type="module" src="i18n.js"></script>
 </body>
 </html>

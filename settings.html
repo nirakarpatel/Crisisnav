@@ -204,6 +204,17 @@
                     </div>
                     <div id="theme-toggle-btn" class="premium-toggle haptic-btn"><div class="toggle-knob"></div></div>
                 </div>
+                
+                <div class="setting-item" id="btn-change-language" style="cursor: pointer; margin-top: 16px;">
+                    <div class="setting-info">
+                        <div class="setting-icon-box" style="background:#e0e7ff; color:var(--primary-blue);"><i class="ph-bold ph-translate"></i></div>
+                        <div class="setting-text">
+                            <h4 data-i18n="lang_preference">Language Preference</h4>
+                            <p id="current-language-display">English</p>
+                        </div>
+                    </div>
+                    <button class="icon-btn haptic-btn"><i class="ph-bold ph-caret-right"></i></button>
+                </div>
             </div>
 
         </main>
@@ -212,12 +223,12 @@
         <nav class="app-nav">
             <button class="nav-item">
                 <i class="ph-bold ph-house"></i>
-                <span>Home</span>
+                <span data-i18n="nav_home">Home</span>
             </button>
             <button class="nav-item">
                 <div class="nav-badge">1</div>
                 <i class="ph-bold ph-briefcase"></i>
-                <span>My Crisis</span>
+                <span data-i18n="nav_my_crisis">My Crisis</span>
             </button>
             <button id="voice-btn" class="nav-mic-btn">
                 <div class="mic-inner">
@@ -226,11 +237,11 @@
             </button>
             <button class="nav-item">
                 <i class="ph-bold ph-file-text"></i>
-                <span>Reports</span>
+                <span data-i18n="nav_reports">Reports</span>
             </button>
             <button class="nav-item active">
                 <i class="ph-fill ph-gear"></i>
-                <span>Settings</span>
+                <span data-i18n="nav_settings">Settings</span>
             </button>
         </nav>
 
@@ -255,6 +266,28 @@
     </div>
 
     <script src="app.js"></script>
+    <script type="module" src="i18n.js"></script>
+    <script type="module">
+        import { showLanguagePicker, getNativeLanguageName, getCurrentLanguage } from './i18n.js';
+
+        // Set initial language display
+        const langDisplay = document.getElementById('current-language-display');
+        if (langDisplay) {
+            langDisplay.textContent = getNativeLanguageName(getCurrentLanguage());
+        }
+
+        // Open language picker
+        document.getElementById('btn-change-language')?.addEventListener('click', () => {
+            showLanguagePicker();
+        });
+
+        // Listen for language changes to update the display
+        document.addEventListener('languageChanged', (e) => {
+            if (langDisplay) {
+                langDisplay.textContent = getNativeLanguageName(e.detail.langCode);
+            }
+        });
+    </script>
     <script>
         // Premium toggle interactivity
         document.querySelectorAll('.premium-toggle:not(#theme-toggle-btn)').forEach(toggle => {

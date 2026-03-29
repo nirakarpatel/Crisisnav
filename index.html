@@ -101,10 +101,10 @@
                     </div>
                 </div>
                 <div class="menu-links">
-                    <a href="index.html" class="menu-link active"><i class="ph-bold ph-house"></i> Home</a>
-                    <a href="my-crises.html" class="menu-link"><i class="ph-bold ph-briefcase"></i> My Crises</a>
-                    <a href="reports.html" class="menu-link"><i class="ph-bold ph-file-text"></i> Reports</a>
-                    <a href="settings.html" class="menu-link"><i class="ph-bold ph-gear"></i> Settings</a>
+                    <a href="index.html" class="menu-link active"><i class="ph-bold ph-house"></i> <span data-i18n="nav_home">Home</span></a>
+                    <a href="my-crises.html" class="menu-link"><i class="ph-bold ph-briefcase"></i> <span data-i18n="nav_my_crisis">My Crises</span></a>
+                    <a href="reports.html" class="menu-link"><i class="ph-bold ph-file-text"></i> <span data-i18n="nav_reports">Reports</span></a>
+                    <a href="settings.html" class="menu-link"><i class="ph-bold ph-gear"></i> <span data-i18n="nav_settings">Settings</span></a>
                     <a href="profile.html" class="menu-link"><i class="ph-bold ph-user-circle"></i> Profile</a>
                     <a href="#" class="menu-link" id="btn-start-tutorial" style="border-top: 1px solid rgba(0,0,0,0.05); margin-top: 8px; padding-top: 12px; color: #10b981;">
                         <i class="ph-bold ph-magic-wand"></i> Quick Tutorial
@@ -142,7 +142,7 @@
             <!-- Search Bar -->
             <div class="search-container">
                 <i class="ph-bold ph-magnifying-glass search-icon"></i>
-                <input type="text" id="crisis-search" placeholder="Search for a crisis or protocol..." autocomplete="off">
+                <input type="text" id="crisis-search" data-i18n="search_placeholder" placeholder="Search for a crisis or protocol..." autocomplete="off">
                 <div class="voice-indicator">
                     <i class="ph-fill ph-microphone"></i>
                 </div>
@@ -154,8 +154,8 @@
                     <i class="ph-fill ph-warning-octagon"></i>
                 </div>
                 <div style="flex: 1;">
-                    <h2 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 2px; font-family: var(--font-heading); color: white;">Mission Protocol Active</h2>
-                    <p style="font-size: 0.8rem; opacity: 0.9; font-weight: 500; color: rgba(255,255,255,0.9); line-height: 1.3;">Remain calm. Execute instructions with precision.</p>
+                    <h2 data-i18n="mission_protocol" style="font-size: 1.1rem; font-weight: 800; margin-bottom: 2px; font-family: var(--font-heading); color: white;">Mission Protocol Active</h2>
+                    <p data-i18n="remain_calm" style="font-size: 0.8rem; opacity: 0.9; font-weight: 500; color: rgba(255,255,255,0.9); line-height: 1.3;">Remain calm. Execute instructions with precision.</p>
                 </div>
             </div>
 
@@ -164,22 +164,22 @@
                 <div class="category-grid" id="category-grid">
                     <button class="category-btn fire" data-crisis="fire">
                         <div class="category-icon"><i class="ph-fill ph-fire"></i></div>
-                        <span>Fire</span>
+                        <span data-i18n="cat_fire">Fire</span>
                     </button>
                     <button class="category-btn accident" data-crisis="accident">
                         <div class="category-icon"><i class="ph-fill ph-car"></i></div>
-                        <span>Accident</span>
+                        <span data-i18n="cat_accident">Accident</span>
                     </button>
                     <button class="category-btn chemical" data-crisis="chemical">
                         <div class="category-icon"><i class="ph-fill ph-flask"></i></div>
-                        <span>Chemical Leak</span>
+                        <span data-i18n="cat_chemical">Chemical Leak</span>
                     </button>
                     <button class="category-btn medical" data-crisis="medical">
                         <div class="category-icon"><i class="ph-fill ph-plus-circle"></i></div>
-                        <span>Medical</span>
+                        <span data-i18n="cat_medical">Medical</span>
                     </button>
                 </div>
-                <button class="report-other-btn">Report Other Crisis</button>
+                <button class="report-other-btn" data-i18n="report_other">Report Other Crisis</button>
             </section>
 
             <!-- Active Steps Display -->
@@ -188,7 +188,7 @@
                     <div class="header-info">
                         <div class="step-count-badge">4</div>
                         <div class="header-text">
-                            <h3>Active Protocol Progress</h3>
+                            <h3 data-i18n="active_protocol">Active Protocol Progress</h3>
                             <p id="current-step-mini">Step 1: Pull the Alarm</p>
                         </div>
                     </div>
@@ -234,7 +234,7 @@
             </section>
 
             <button class="next-step-btn" id="next-step-btn">
-                <span>Next Step</span>
+                <span data-i18n="next_step">Next Step</span>
                 <i class="ph-bold ph-caret-right"></i>
                 <small id="next-step-hint">Close Gas Valves</small>
             </button>
@@ -245,12 +245,12 @@
         <nav class="app-nav">
             <button class="nav-item active">
                 <i class="ph-fill ph-house"></i>
-                <span>Home</span>
+                <span data-i18n="nav_home">Home</span>
             </button>
             <button class="nav-item">
                 <div class="nav-badge">5</div>
                 <i class="ph-bold ph-briefcase"></i>
-                <span>My Crisis</span>
+                <span data-i18n="nav_my_crisis">My Crisis</span>
             </button>
             <button id="voice-btn" class="nav-mic-btn">
                 <div class="mic-inner">
@@ -259,11 +259,11 @@
             </button>
             <button class="nav-item">
                 <i class="ph-bold ph-file-text"></i>
-                <span>Reports</span>
+                <span data-i18n="nav_reports">Reports</span>
             </button>
             <button class="nav-item">
                 <i class="ph-bold ph-gear"></i>
-                <span>Settings</span>
+                <span data-i18n="nav_settings">Settings</span>
             </button>
         </nav>
         <!-- Modals and Overlays go here to stay inside the frame -->
@@ -332,6 +332,7 @@
 
     <!-- Scripts -->
     <script src="app.js"></script>
+    <script type="module" src="i18n.js"></script>
     <script>
         // Step Card Cycling Logic
         (function() {
