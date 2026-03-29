@@ -1400,22 +1400,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Loader logic
-function hideLoader() {
-    const loader = document.getElementById('loading-overlay');
-    if (loader) {
-        loader.classList.add('fade-out');
-        setTimeout(() => {
-            loader.style.display = 'none';
-        }, 600);
-    }
-}
-
 // Start the app
 init();
 loadSessionActivity();
 
-// Hide loader after short delay for better transition
-window.addEventListener('load', () => {
-    setTimeout(hideLoader, 500);
-});

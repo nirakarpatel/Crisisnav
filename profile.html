@@ -86,17 +86,7 @@
 <body>
     <div class="app-container">
         <div class="app-phone-frame">
-            <!-- Loading Overlay -->
-            <div id="loading-overlay">
-                <div class="loader-content">
-                    <img src="assets/logo.png" class="loader-logo" alt="CrisisNav Logo">
-                    <div class="loader-progress-container">
-                        <div class="loader-progress-bar"></div>
-                    </div>
-                    <div class="loader-status">System Initializing...</div>
-                </div>
-            </div>
-
+            <!-- Layout Start -->
             <div class="menu-overlay" id="menu-overlay"></div>
             <div class="side-menu" id="side-menu">
                 <div class="menu-header" style="position: relative;">
@@ -374,20 +364,6 @@
             });
         });
 
-        // Loader logic
-        function hideLoader() {
-            const loader = document.getElementById('loading-overlay');
-            if (loader) {
-                loader.classList.add('fade-out');
-                setTimeout(() => {
-                    loader.style.display = 'none';
-                }, 600);
-            }
-        }
-
-        window.addEventListener('load', () => {
-            setTimeout(hideLoader, 600);
-        });
     </script>
 </body>
 </html>

@@ -307,16 +307,7 @@
 </head>
 
 <body>
-    <!-- Loading Overlay -->
-    <div id="loading-overlay">
-        <div class="loader-content">
-            <img src="assets/logo.png" class="loader-logo" alt="CrisisNav Logo">
-            <div class="loader-progress-container">
-                <div class="loader-progress-bar"></div>
-            </div>
-            <div class="loader-status">System Initializing...</div>
-        </div>
-    </div>
+
 
     <div class="app-container">
         <div class="app-phone-frame">
@@ -470,21 +461,6 @@
                 console.error('Google Auth Error:', error.message);
                 alert('Google Sign-In Failed: ' + error.message);
             }
-        });
-
-        // Loader logic
-        function hideLoader() {
-            const loader = document.getElementById('loading-overlay');
-            if (loader) {
-                loader.classList.add('fade-out');
-                setTimeout(() => {
-                    loader.style.display = 'none';
-                }, 600);
-            }
-        }
-
-        window.addEventListener('load', () => {
-            setTimeout(hideLoader, 600);
         });
 
         window.addEventListener('DOMContentLoaded', () => {
