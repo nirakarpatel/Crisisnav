@@ -63,12 +63,20 @@ const dom = {
 
 // ── Initialization ─────────────────────────────────────────
 async function init() {
+    // Check URL for voice activation
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('voice') === 'true') {
+        window.voiceActivated = true;
+    }
+    
+    let defaultCrisis = urlParams.get('crisis') || 'fire';
+
     try {
         const response = await fetch('/api/crises');
         state.crises = await response.json();
         if (dom.categoryGrid) {
             renderCategories();
-            startCrisis('fire'); // Start with fire by default for the demo
+            startCrisis(defaultCrisis);
         }
     } catch (error) {
         console.error('Failed to fetch crisis data:', error);
@@ -76,8 +84,13 @@ async function init() {
         state.crises = mockData;
         if (dom.categoryGrid) {
             renderCategories();
-            startCrisis('fire');
+            startCrisis(defaultCrisis);
         }
+    }
+    
+    // Clean up URL if we handled voice
+    if (window.voiceActivated) {
+        window.history.replaceState({}, document.title, window.location.pathname);
     }
     
     initEvents();
@@ -214,6 +227,9 @@ function startCrisis(id) {
     }
 
     updateUI();
+    if (window.voiceActivated) {
+        setTimeout(() => window.speakCurrentStep(), 500);
+    }
 }
 
 // ── Update UI ──────────────────────────────────────────────
@@ -281,49 +297,30 @@ function renderSteps() {
     `;
 }
 
-// ── Voice Recognition ──────────────────────────────────────
-let recognition = null;
-if ('webkitSpeechRecognition' in window) {
-    recognition = new webkitSpeechRecognition();
-    recognition.continuous = false;
-    recognition.interimResults = false;
-    recognition.lang = 'en-US';
-
-    recognition.onstart = () => {
-        dom.voiceBtn.classList.add('active');
-        console.log('Voice recognition started...');
+// ── Text To Speech ──────────────────────────────────────
+window.speakCurrentStep = function() {
+    if (!state.activeCrisis || !('speechSynthesis' in window)) return;
+    
+    // Stop any ongoing speech
+    window.speechSynthesis.cancel();
+    
+    const step = state.activeCrisis.steps[state.currentStep];
+    const currentLang = localStorage.getItem('crisisnav_lang') || 'en';
+    const localeMap = {
+        en: 'en-US', hi: 'hi-IN', bn: 'bn-IN', te: 'te-IN', mr: 'mr-IN',
+        ta: 'ta-IN', ur: 'ur-PK', gu: 'gu-IN', kn: 'kn-IN', ml: 'ml-IN',
+        or: 'or-IN', pa: 'pa-IN'
     };
-
-    recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript.toLowerCase();
-        console.log('Voice Input:', transcript);
-        handleVoiceCommand(transcript);
-        dom.voiceBtn.classList.remove('active');
-    };
-
-    recognition.onerror = (event) => {
-        console.error('Speech recognition error:', event.error);
-        dom.voiceBtn.classList.remove('active');
-    };
-
-    recognition.onend = () => {
-        dom.voiceBtn.classList.remove('active');
-    };
-}
-
-function handleVoiceCommand(text) {
-    if (text.includes('fire')) {
-        showSmartRecommendation('fire');
-    } else if (text.includes('accident') || text.includes('car')) {
-        showSmartRecommendation('accident');
-    } else if (text.includes('chemical') || text.includes('leak')) {
-        showSmartRecommendation('chemical');
-    } else if (text.includes('medical') || text.includes('heart') || text.includes('ill')) {
-        showSmartRecommendation('medical');
-    } else {
-        alert(`Command not recognized: "${text}". Try saying "There is a fire".`);
-    }
-}
+    const lang = localeMap[currentLang] || 'en-US';
+    
+    const msgTitle = new SpeechSynthesisUtterance("Step " + (state.currentStep + 1) + ". " + step.title);
+    const msgDesc = new SpeechSynthesisUtterance(step.desc);
+    msgTitle.lang = lang;
+    msgDesc.lang = lang;
+    
+    window.speechSynthesis.speak(msgTitle);
+    window.speechSynthesis.speak(msgDesc);
+};
 
 // ── Smart Recommendations ──────────────────────────────────
 function showSmartRecommendation(crisisId) {
@@ -400,6 +397,7 @@ function initEvents() {
                 state.currentStep++;
                 logActivity(`Step ${state.currentStep} completed`, 'ph-bold ph-check-circle', 'info');
                 updateUI();
+                if (window.voiceActivated) window.speakCurrentStep();
             } else {
                 state.protocolCompleted = true;
                 logActivity('Emergency protocol completed', 'ph-bold ph-crown', 'info');
@@ -409,16 +407,7 @@ function initEvents() {
         });
     }
 
-    // Voice button
-    if (dom.voiceBtn) {
-        dom.voiceBtn.addEventListener('click', () => {
-            if (recognition) {
-                recognition.start();
-            } else {
-                alert('Speech Recognition is not supported in this browser.');
-            }
-        });
-    }
+    // Removed duplicate Voice Button (handled below)
 
     // Report Other Crisis
     const reportOtherBtn = document.querySelector('.report-other-btn');
@@ -526,28 +515,95 @@ function initEvents() {
                 }
             }
             
-            voiceModal.classList.add('active');
+            // Initialize Real Speech Recognition
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert("Voice recognition is not supported in this browser.");
+                return;
+            }
             
-            // Mock completion after 3 seconds
-            setTimeout(() => {
+            const recognition = new SpeechRecognition();
+            const currentLang = localStorage.getItem('crisisnav_lang') || 'en';
+            const localeMap = {
+                en: 'en-US', hi: 'hi-IN', bn: 'bn-IN', te: 'te-IN', mr: 'mr-IN',
+                ta: 'ta-IN', ur: 'ur-PK', gu: 'gu-IN', kn: 'kn-IN', ml: 'ml-IN',
+                or: 'or-IN', pa: 'pa-IN'
+            };
+            recognition.lang = localeMap[currentLang] || 'en-US';
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            
+            recognition.onstart = () => {
+                voiceModal.classList.add('active');
+            };
+            
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript.toLowerCase();
                 const heading = voiceModal.querySelector('h2');
                 const origText = heading.textContent;
-                heading.textContent = "Command Processed!";
-                voiceModal.querySelector('.mic-pulse-ring').style.animation = 'none';
-                voiceModal.querySelector('.mic-pulse-ring > div').style.background = '#10b981';
-                voiceModal.querySelector('.mic-pulse-ring > div').style.boxShadow = '0 0 20px rgba(16, 185, 129, 0.5)';
+                heading.textContent = `"${transcript}"`;
                 
+                voiceModal.querySelector('.mic-pulse-ring').style.animation = 'none';
+                
+                const keywords = ['fire', 'आग', 'ag', 'আগুন', 'ti', 'തീ', 'ಬೆಂ'];
+                const isFire = keywords.some(k => transcript.includes(k));
+                
+                if (isFire) {
+                    voiceModal.querySelector('.mic-pulse-ring > div').style.background = '#10b981';
+                    voiceModal.querySelector('.mic-pulse-ring > div').style.boxShadow = '0 0 20px rgba(16, 185, 129, 0.5)';
+                    setTimeout(() => {
+                        voiceModal.classList.remove('active');
+                        // Restore state
+                        setTimeout(() => {
+                            heading.textContent = origText;
+                            voiceModal.querySelector('.mic-pulse-ring').style.animation = 'pulse-ring 1.5s infinite ease-out';
+                            voiceModal.querySelector('.mic-pulse-ring > div').style.background = 'var(--primary-blue)';
+                            voiceModal.querySelector('.mic-pulse-ring > div').style.boxShadow = '0 0 20px rgba(59, 130, 246, 0.5)';
+                        }, 300);
+                        
+                        // Action: Enable vocal UI globally and start fire crisis
+                        window.voiceActivated = true;
+                        if (window.location.pathname.includes('index.html') || window.location.pathname.endsWith('/')) {
+                            startCrisis('fire');
+                        } else {
+                            window.location.href = 'index.html?crisis=fire&voice=true';
+                        }
+                    }, 1200);
+                } else {
+                    heading.textContent = "Command not recognized";
+                    voiceModal.querySelector('.mic-pulse-ring > div').style.background = '#ef4444';
+                    voiceModal.querySelector('.mic-pulse-ring > div').style.boxShadow = '0 0 20px rgba(239, 68, 68, 0.5)';
+                    setTimeout(() => {
+                        voiceModal.classList.remove('active');
+                        // Restore state
+                        setTimeout(() => {
+                            heading.textContent = origText;
+                            voiceModal.querySelector('.mic-pulse-ring').style.animation = 'pulse-ring 1.5s infinite ease-out';
+                            voiceModal.querySelector('.mic-pulse-ring > div').style.background = 'var(--primary-blue)';
+                            voiceModal.querySelector('.mic-pulse-ring > div').style.boxShadow = '0 0 20px rgba(59, 130, 246, 0.5)';
+                        }, 300);
+                    }, 1500);
+                }
+            };
+            
+            recognition.onerror = (event) => {
+                console.error("Speech Recognition Error:", event.error);
+                const heading = voiceModal.querySelector('h2');
+                const origText = heading.textContent;
+                heading.textContent = "Error: " + event.error;
                 setTimeout(() => {
                     voiceModal.classList.remove('active');
-                    // Reset
-                    setTimeout(() => {
-                        heading.textContent = origText;
-                        voiceModal.querySelector('.mic-pulse-ring').style.animation = 'pulse-ring 1.5s infinite ease-out';
-                        voiceModal.querySelector('.mic-pulse-ring > div').style.background = 'var(--primary-blue)';
-                        voiceModal.querySelector('.mic-pulse-ring > div').style.boxShadow = '0 0 20px rgba(59, 130, 246, 0.5)';
-                    }, 300);
-                }, 1000);
-            }, 3000);
+                    heading.textContent = origText;
+                }, 1500);
+            };
+            
+            recognition.onend = () => {
+                if (voiceModal.classList.contains('active') && voiceModal.querySelector('h2').textContent === "Listening...") {
+                    voiceModal.classList.remove('active');
+                }
+            };
+            
+            recognition.start();
         });
     }
 
