@@ -27,8 +27,7 @@
     </script>
     <style>
         .app-container {
-            position: relative;
-            background: linear-gradient(135deg, #f0f4ff 0%, #ffffff 100%);
+            background: var(--bg-color); /* Use global background */
         }
         .decorator {
             position: absolute;
@@ -56,7 +55,7 @@
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
-            padding: 16px 20px 60px;
+            padding: 8px 16px 40px; /* Reduced vertical padding */
             position: relative;
             z-index: 1;
             overflow-y: auto;
@@ -68,41 +67,41 @@
             background: rgba(255, 255, 255, 0.7);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            padding: 24px 20px;
+            padding: 16px 16px; /* Reduced padding */
             border-radius: 28px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255,255,255,0.6);
             border: 1px solid rgba(255, 255, 255, 0.8);
             text-align: center;
         }
         .auth-logo {
-            width: 56px;
-            height: 56px;
+            width: 48px; /* Smaller logo */
+            height: 48px;
             background: linear-gradient(135deg, var(--primary-blue), #6366f1);
             color: var(--white);
-            border-radius: 16px;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 28px;
-            margin: 0 auto 12px;
+            font-size: 24px;
+            margin: 0 auto 8px;
             box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
         }
         .auth-title {
             font-family: var(--font-heading);
-            font-size: 1.6rem;
+            font-size: 1.4rem; /* Smaller font */
             font-weight: 700;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
             color: var(--text-dark);
         }
         .auth-subtitle {
             color: var(--text-muted);
-            font-size: 0.85rem;
-            margin-bottom: 20px;
+            font-size: 0.8rem;
+            margin-bottom: 12px;
         }
         .auth-form {
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 12px; /* Tighter gap */
             text-align: left;
         }
         .form-row {
@@ -115,7 +114,7 @@
         .input-group {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 4px; /* Reduced gap between label and input */
         }
         .input-group label {
             font-size: 0.8rem;
@@ -138,10 +137,10 @@
         }
         .input-wrapper input, .input-wrapper select {
             width: 100%;
-            padding: 12px 12px 12px 40px;
+            padding: 10px 10px 10px 40px; /* Reduced vertical padding */
             border: 1.5px solid #e2e8f0;
-            border-radius: 12px;
-            font-size: 0.9rem;
+            border-radius: 11px;
+            font-size: 0.88rem;
             outline: none;
             background: rgba(255, 255, 255, 0.9);
             color: var(--text-dark);
@@ -352,9 +351,10 @@
     </div>
 
     <div class="app-container">
-        <!-- Decorative Background Entities -->
-        <div class="decorator decorator-1"></div>
-        <div class="decorator decorator-2"></div>
+        <div class="app-phone-frame">
+            <!-- Decorative Background Entities -->
+            <div class="decorator decorator-1"></div>
+            <div class="decorator decorator-2"></div>
 
         <!-- Header -->
         <header class="app-header" style="position: relative; z-index: 2;">
@@ -461,6 +461,7 @@
                 </div>
             </div>
         </main>
+        </div>
     </div>
 
     <script type="module">

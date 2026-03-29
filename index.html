@@ -69,60 +69,60 @@
     </script>
 </head>
 <body>
-    <!-- Loading Overlay -->
-    <div id="loading-overlay">
-        <div class="loader-content">
-            <img src="assets/logo.png" class="loader-logo" alt="CrisisNav Logo">
-            <div class="loader-progress-container">
-                <div class="loader-progress-bar"></div>
-            </div>
-            <div class="loader-status">System Initializing...</div>
-        </div>
-    </div>
-
-    <div class="menu-overlay" id="menu-overlay"></div>
-    <div class="side-menu" id="side-menu">
-        <div class="menu-header">
-            <div class="menu-logo">
-                <i class="ph-fill ph-shield-check"></i>
-                <h2>CrisisNav</h2>
-            </div>
-            
-            <div class="menu-user-info">
-                <div class="menu-user-avatar">
-                    <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&h=100&fit=crop" alt="Avatar" class="profile-pic-img">
-                </div>
-                <div class="menu-user-details">
-                    <h3 class="profile-display-name">User</h3>
-                    <p class="profile-display-role">Crisis Responder</p>
-                </div>
-            </div>
-        </div>
-        <div class="menu-links">
-            <a href="index.html" class="menu-link active"><i class="ph-bold ph-house"></i> Home</a>
-            <a href="my-crises.html" class="menu-link"><i class="ph-bold ph-briefcase"></i> My Crises</a>
-            <a href="reports.html" class="menu-link"><i class="ph-bold ph-file-text"></i> Reports</a>
-            <a href="settings.html" class="menu-link"><i class="ph-bold ph-gear"></i> Settings</a>
-            <a href="profile.html" class="menu-link"><i class="ph-bold ph-user-circle"></i> Profile</a>
-            <a href="#" class="menu-link" id="btn-start-tutorial" style="border-top: 1px solid rgba(0,0,0,0.05); margin-top: 8px; padding-top: 12px; color: #10b981;">
-                <i class="ph-bold ph-magic-wand"></i> Quick Tutorial
-            </a>
-        </div>
-        <div class="menu-recent-activity">
-            <h3>Recent System Activity</h3>
-            <div id="sidebar-activity-list" class="sidebar-activity-list">
-                <!-- Activities will be injected here by JS -->
-                <div class="sidebar-activity-placeholder">No activities recorded in this session</div>
-            </div>
-        </div>
-        <div class="menu-footer">
-            <a href="#" class="logout-btn"><i class="ph-bold ph-sign-out"></i> Log Out</a>
-        </div>
-    </div>
-
     <div class="app-container">
-        <!-- Header -->
-        <header class="app-header">
+        <div class="app-phone-frame">
+            <!-- Loading Overlay -->
+            <div id="loading-overlay">
+                <div class="loader-content">
+                    <img src="assets/logo.png" class="loader-logo" alt="CrisisNav Logo">
+                    <div class="loader-progress-container">
+                        <div class="loader-progress-bar"></div>
+                    </div>
+                    <div class="loader-status">System Initializing...</div>
+                </div>
+            </div>
+
+            <div class="menu-overlay" id="menu-overlay"></div>
+            <div class="side-menu" id="side-menu">
+                <div class="menu-header">
+                    <div class="menu-logo">
+                        <i class="ph-fill ph-shield-check"></i>
+                        <h2>CrisisNav</h2>
+                    </div>
+                    
+                    <div class="menu-user-info">
+                        <div class="menu-user-avatar">
+                            <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&h=100&fit=crop" alt="Avatar" class="profile-pic-img">
+                        </div>
+                        <div class="menu-user-details">
+                            <h3 class="profile-display-name">User</h3>
+                            <p class="profile-display-role">Crisis Responder</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="menu-links">
+                    <a href="index.html" class="menu-link active"><i class="ph-bold ph-house"></i> Home</a>
+                    <a href="my-crises.html" class="menu-link"><i class="ph-bold ph-briefcase"></i> My Crises</a>
+                    <a href="reports.html" class="menu-link"><i class="ph-bold ph-file-text"></i> Reports</a>
+                    <a href="settings.html" class="menu-link"><i class="ph-bold ph-gear"></i> Settings</a>
+                    <a href="profile.html" class="menu-link"><i class="ph-bold ph-user-circle"></i> Profile</a>
+                    <a href="#" class="menu-link" id="btn-start-tutorial" style="border-top: 1px solid rgba(0,0,0,0.05); margin-top: 8px; padding-top: 12px; color: #10b981;">
+                        <i class="ph-bold ph-magic-wand"></i> Quick Tutorial
+                    </a>
+                </div>
+                <div class="menu-recent-activity">
+                    <h3>Recent System Activity</h3>
+                    <div id="sidebar-activity-list" class="sidebar-activity-list">
+                        <!-- Activities will be injected here by JS -->
+                        <div class="sidebar-activity-placeholder">No activities recorded in this session</div>
+                    </div>
+                </div>
+                <div class="menu-footer">
+                    <a href="#" class="logout-btn"><i class="ph-bold ph-sign-out"></i> Log Out</a>
+                </div>
+            </div>
+            <!-- Header -->
+            <header class="app-header">
             <div class="header-left">
                 <button id="menu-toggle" class="icon-btn"><i class="ph-bold ph-list"></i></button>
                 <h1 class="app-title">Crisis Navigation System</h1>
@@ -149,13 +149,13 @@
             </div>
 
             <!-- Emergency Advice Banner -->
-            <div class="setting-card" style="background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%); border: none; color: white; display: flex; align-items: center; gap: 20px;">
-                <div class="setting-icon-box" style="background: rgba(255,255,255,0.2); color: white; width: 60px; height: 60px; font-size: 30px;">
+            <div class="setting-card" style="background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%); border: none; color: white; display: flex; align-items: center; gap: 16px; padding: 20px; width: 100%; box-sizing: border-box; flex-shrink: 0;">
+                <div class="setting-icon-box" style="background: rgba(255,255,255,0.2); color: white; width: 50px; height: 50px; min-width: 50px; font-size: 24px; border-radius: 14px;">
                     <i class="ph-fill ph-warning-octagon"></i>
                 </div>
-                <div>
-                    <h2 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 4px; font-family: var(--font-heading);">Mission Protocol Active</h2>
-                    <p style="font-size: 0.9rem; opacity: 0.9; font-weight: 500;">Remain calm. Execute instructions with precision.</p>
+                <div style="flex: 1;">
+                    <h2 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 2px; font-family: var(--font-heading); color: white;">Mission Protocol Active</h2>
+                    <p style="font-size: 0.8rem; opacity: 0.9; font-weight: 500; color: rgba(255,255,255,0.9); line-height: 1.3;">Remain calm. Execute instructions with precision.</p>
                 </div>
             </div>
 
@@ -231,16 +231,12 @@
                     </div>
                 </div>
             </section>
-                </div>
 
-                <button class="next-step-btn" id="next-step-btn">
-                    <span>Next Step</span>
-                    <i class="ph-bold ph-caret-right"></i>
-                    <small id="next-step-hint">Collect personal protective documents (PPE)</small>
-                </button>
-            </section>
-
-            <!-- Recent Activity moved to sidebar -->
+            <button class="next-step-btn" id="next-step-btn" style="margin-top: 20px;">
+                <span>Next Step</span>
+                <i class="ph-bold ph-caret-right"></i>
+                <small id="next-step-hint">Collect personal protective documents (PPE)</small>
+            </button>
         </main>
 
         <!-- Bottom Tab Bar -->
@@ -268,7 +264,7 @@
                 <span>Settings</span>
             </button>
         </nav>
-    </div>
+        <!-- Modals and Overlays go here to stay inside the frame -->
 
     <!-- Smart Recommendation Modal -->
     <div id="recommendation-modal" class="modal-overlay">
@@ -328,6 +324,7 @@
             <div class="modal-footer">
                 <button onclick="document.getElementById('onboard-modal').classList.remove('active')" class="btn-primary" style="width: 100%;">Get Started</button>
             </div>
+        </div>
         </div>
     </div>
 

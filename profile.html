@@ -33,74 +33,39 @@
             align-items: center;
             gap: 16px;
             padding: 32px 24px 24px;
-            background: var(--white);
+            background: var(--bg-color); /* Updated */
             border-radius: var(--radius);
-            box-shadow: var(--shadow);
             margin-bottom: 24px;
             position: relative;
         }
-        .profile-img-container {
-            position: relative;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        .profile-img-container:hover {
-            transform: scale(1.05);
-        }
         .profile-img-container img {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
+            width: 110px;
+            height: 110px;
+            border-radius: 30px; /* More modern squircle */
             object-fit: cover;
-            border: 4px solid #eff6ff;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-        .upload-icon {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            background: var(--primary-blue);
-            color: var(--white);
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 2px solid var(--white);
-            font-size: 16px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-        .form-group {
-            margin-bottom: 16px;
-        }
-        .form-label {
-            display: block;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            margin-bottom: 8px;
+            border: 4px solid var(--white);
+            box-shadow: var(--shadow-deep);
         }
         .form-input {
             width: 100%;
-            padding: 14px 16px;
-            border-radius: 12px;
-            border: 1px solid #cbd5e1;
+            padding: 12px 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(0,0,0,0.1);
             font-family: var(--font-main);
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             color: var(--text-dark);
-            background: #f8fafc;
+            background: rgba(0,0,0,0.02);
             outline: none;
             transition: all 0.2s;
         }
         .form-input:focus {
             border-color: var(--primary-blue);
             background: var(--white);
-            box-shadow: 0 0 0 4px #eff6ff;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
         }
         .save-btn {
             width: 100%;
-            padding: 16px;
+            padding: 14px;
             background: var(--primary-blue);
             color: var(--white);
             border: none;
@@ -112,80 +77,67 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: all 0.2s;
             box-shadow: 0 10px 20px rgba(59, 130, 246, 0.2);
             margin-top: 10px;
-        }
-        .save-btn:active {
-            transform: scale(0.98);
-            box-shadow: 0 5px 10px rgba(59, 130, 246, 0.2);
-        }
-        .app-header .header-left .icon-btn {
-            background: #f1f5f9;
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
     </style>
 </head>
 <body>
-    <!-- Loading Overlay -->
-    <div id="loading-overlay">
-        <div class="loader-content">
-            <img src="assets/logo.png" class="loader-logo" alt="CrisisNav Logo">
-            <div class="loader-progress-container">
-                <div class="loader-progress-bar"></div>
-            </div>
-            <div class="loader-status">System Initializing...</div>
-        </div>
-    </div>
-
-    <div class="menu-overlay" id="menu-overlay"></div>
-    <div class="side-menu" id="side-menu">
-        <div class="menu-header">
-            <div class="menu-logo">
-                <i class="ph-fill ph-shield-check"></i>
-                <h2>CrisisNav</h2>
-            </div>
-
-            <div class="menu-user-info">
-                <div class="menu-user-avatar">
-                    <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&h=100&fit=crop" alt="Avatar" class="profile-pic-img">
-                </div>
-                <div class="menu-user-details">
-                    <h3 class="profile-display-name">User</h3>
-                    <p class="profile-display-role">Crisis Responder</p>
-                </div>
-            </div>
-        </div>
-        <div class="menu-links">
-            <a href="index.html" class="menu-link"><i class="ph-bold ph-house"></i> Home</a>
-            <a href="my-crises.html" class="menu-link"><i class="ph-bold ph-briefcase"></i> My Crises</a>
-            <a href="reports.html" class="menu-link"><i class="ph-bold ph-file-text"></i> Reports</a>
-            <a href="settings.html" class="menu-link"><i class="ph-bold ph-gear"></i> Settings</a>
-            <a href="profile.html" class="menu-link active"><i class="ph-bold ph-user-circle"></i> Profile</a>
-            <a href="#" class="menu-link" id="btn-start-tutorial" style="border-top: 1px solid rgba(0,0,0,0.05); margin-top: 8px; padding-top: 12px; color: #10b981;">
-                <i class="ph-bold ph-magic-wand"></i> Quick Tutorial
-            </a>
-        </div>
-        <div class="menu-recent-activity">
-            <h3>Recent System Activity</h3>
-            <div id="sidebar-activity-list" class="sidebar-activity-list">
-                <!-- Activities will be injected here by JS -->
-                <div class="sidebar-activity-placeholder">No activities recorded in this session</div>
-            </div>
-        </div>
-        <div class="menu-footer">
-            <a href="#" class="logout-btn"><i class="ph-bold ph-sign-out"></i> Log Out</a>
-        </div>
-    </div>
-
     <div class="app-container">
-        <!-- Header -->
-        <header class="app-header">
+        <div class="app-phone-frame">
+            <!-- Loading Overlay -->
+            <div id="loading-overlay">
+                <div class="loader-content">
+                    <img src="assets/logo.png" class="loader-logo" alt="CrisisNav Logo">
+                    <div class="loader-progress-container">
+                        <div class="loader-progress-bar"></div>
+                    </div>
+                    <div class="loader-status">System Initializing...</div>
+                </div>
+            </div>
+
+            <div class="menu-overlay" id="menu-overlay"></div>
+            <div class="side-menu" id="side-menu">
+                <div class="menu-header">
+                    <div class="menu-logo">
+                        <i class="ph-fill ph-shield-check"></i>
+                        <h2>CrisisNav</h2>
+                    </div>
+                    <div class="menu-user-info">
+                        <div class="menu-user-avatar">
+                            <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&h=100&fit=crop" alt="Avatar" class="profile-pic-img">
+                        </div>
+                        <div class="menu-user-details">
+                            <h3 class="profile-display-name">User</h3>
+                            <p class="profile-display-role">Crisis Responder</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="menu-links">
+                    <a href="index.html" class="menu-link"><i class="ph-bold ph-house"></i> Home</a>
+                    <a href="my-crises.html" class="menu-link"><i class="ph-bold ph-briefcase"></i> My Crises</a>
+                    <a href="reports.html" class="menu-link"><i class="ph-bold ph-file-text"></i> Reports</a>
+                    <a href="settings.html" class="menu-link"><i class="ph-bold ph-gear"></i> Settings</a>
+                    <a href="profile.html" class="menu-link active"><i class="ph-bold ph-user-circle"></i> Profile</a>
+                    <a href="#" class="menu-link" id="btn-start-tutorial" style="border-top: 1px solid rgba(0,0,0,0.05); margin-top: 8px; padding-top: 12px; color: #10b981;">
+                        <i class="ph-bold ph-magic-wand"></i> Quick Tutorial
+                    </a>
+                </div>
+                <div class="menu-recent-activity">
+                    <h3>Recent System Activity</h3>
+                    <div id="sidebar-activity-list" class="sidebar-activity-list">
+                        <!-- Activities will be injected here by JS -->
+                        <div class="sidebar-activity-placeholder">No activities recorded in this session</div>
+                    </div>
+                </div>
+                <div class="menu-footer">
+                    <a href="#" class="logout-btn"><i class="ph-bold ph-sign-out"></i> Log Out</a>
+                </div>
+            </div>
+
+            <!-- Header -->
+            <header class="app-header">
             <div class="header-left">
                 <button id="menu-toggle" class="icon-btn"><i class="ph-bold ph-list"></i></button>
                 <h1 class="app-title">Profile</h1>
@@ -274,6 +226,7 @@
                 <span>Profile</span>
             </button>
         </nav>
+        </div>
     </div>
 
     <!-- Scripts -->
