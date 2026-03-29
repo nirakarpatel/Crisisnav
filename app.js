@@ -531,17 +531,33 @@ function initEvents() {
             };
             recognition.lang = localeMap[currentLang] || 'en-US';
             recognition.continuous = false;
-            recognition.interimResults = false;
+            recognition.interimResults = true;
             
             recognition.onstart = () => {
                 voiceModal.classList.add('active');
             };
             
             recognition.onresult = (event) => {
-                const transcript = event.results[0][0].transcript.toLowerCase();
+                let interimTranscript = '';
+                let finalTranscript = '';
+
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    if (event.results[i].isFinal) {
+                        finalTranscript += event.results[i][0].transcript;
+                    } else {
+                        interimTranscript += event.results[i][0].transcript;
+                    }
+                }
+
+                const transcript = (finalTranscript || interimTranscript).toLowerCase().trim();
                 const heading = voiceModal.querySelector('h2');
-                const origText = heading.textContent;
-                heading.textContent = `"${transcript}"`;
+                const origText = "Listening...";
+                
+                if (transcript) {
+                    heading.textContent = `"${transcript}"`;
+                }
+
+                if (!finalTranscript) return; // Wait for final result before matching
                 
                 voiceModal.querySelector('.mic-pulse-ring').style.animation = 'none';
                 
@@ -603,11 +619,19 @@ function initEvents() {
             recognition.onerror = (event) => {
                 console.error("Speech Recognition Error:", event.error);
                 const heading = voiceModal.querySelector('h2');
-                const origText = heading.textContent;
-                heading.textContent = "Error: " + event.error;
+                const origText = "Listening...";
+                
+                if (event.error === 'no-speech') {
+                    heading.textContent = "No voice detected";
+                } else if (event.error === 'not-allowed') {
+                    heading.textContent = "Mic access denied";
+                } else {
+                    heading.textContent = "Try again...";
+                }
+
                 setTimeout(() => {
                     voiceModal.classList.remove('active');
-                    heading.textContent = origText;
+                    setTimeout(() => { heading.textContent = origText; }, 300);
                 }, 1500);
             };
             
