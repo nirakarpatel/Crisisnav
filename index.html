@@ -15,13 +15,31 @@
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="assets/logo.png">
 
-    <!-- PWA Registration -->
+    <!-- Initial Boot Loader (Shows only once per session) -->
+    <div id="boot-loader" class="boot-loader">
+        <div class="boot-logo">
+            <i class="ph-fill ph-shield-check"></i>
+        </div>
+        <div class="boot-text">System Initializing...</div>
+        <div class="boot-progress-bar">
+            <div class="boot-progress-fill"></div>
+        </div>
+    </div>
+
     <script>
-        if ('serviceWorker' in navigator) {
+        // Check if boot is already complete in this session
+        if (sessionStorage.getItem('boot_complete') === 'true') {
+            document.getElementById('boot-loader').style.display = 'none';
+        } else {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('service-worker.js')
-                    .then(reg => console.log('Service Worker Registered'))
-                    .catch(err => console.log('Service Worker Registration Failed:', err));
+                setTimeout(() => {
+                    const loader = document.getElementById('boot-loader');
+                    loader.classList.add('fade-out');
+                    sessionStorage.setItem('boot_complete', 'true');
+                    setTimeout(() => {
+                        loader.remove();
+                    }, 500);
+                }, 2000);
             });
         }
     </script>
