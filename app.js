@@ -30,7 +30,8 @@ let state = {
     activeCrisis: null,
     currentStep: 0,
     actionLogs: [],
-    protocolCompleted: false
+    protocolCompleted: false,
+    protocolStarted: false
 };
 
 // ── DOM Elements ───────────────────────────────────────────
@@ -214,6 +215,7 @@ function startCrisis(id) {
     state.currentStep = 0;
     state.actionLogs = [];
     state.protocolCompleted = false;
+    state.protocolStarted = false;
     
     logActivity(`${crisis.title} started`, crisis.icon, crisis.id);
     
@@ -227,8 +229,10 @@ function startCrisis(id) {
     }
 
     updateUI();
+    // No automatic TTS on startup unless it's already a voice-triggered flow
     if (window.voiceActivated) {
-        setTimeout(() => window.speakCurrentStep(), 500);
+        // Only auto-speak if it's a cross-page voice trigger
+        // Otherwise wait for the 'Start' button
     }
 }
 
@@ -244,11 +248,16 @@ function updateUI() {
     
     // Update Next Step Button
     if (dom.nextStepBtn) {
-        if (state.currentStep < crisis.steps.length - 1) {
+        if (!state.protocolStarted) {
+            dom.nextStepBtn.innerHTML = '<span data-i18n="start_protocol">Start Protocol 1</span> <i class="ph-bold ph-play"></i>';
+            dom.nextStepBtn.style.display = 'flex';
+            if (dom.nextStepHint) dom.nextStepHint.textContent = ""; 
+        } else if (state.currentStep < crisis.steps.length - 1) {
+            dom.nextStepBtn.innerHTML = '<span data-i18n="next_step">Next Step</span> <i class="ph-bold ph-caret-right"></i>';
             dom.nextStepBtn.style.display = 'flex';
             if (dom.nextStepHint) dom.nextStepHint.textContent = crisis.steps[state.currentStep + 1].title;
         } else {
-            dom.nextStepBtn.innerHTML = '<span>Protocol Complete</span> <i class="ph-bold ph-check"></i>';
+            dom.nextStepBtn.innerHTML = '<span data-i18n="complete_protocol">Protocol Complete</span> <i class="ph-bold ph-check"></i>';
         }
     }
     
@@ -281,20 +290,37 @@ function renderSteps() {
         typeClass = 'fire';
     }
 
-    dom.stepsList.innerHTML = `
-        <div class="step-progress-dots">
-            ${dotsHtml}
-        </div>
-        <div class="step-card active">
-            <div class="step-card-icon ${typeClass}">
-                <i class="${iconClass}"></i>
+    if (!state.protocolStarted) {
+        dom.stepsList.innerHTML = `
+            <div class="step-card active intro-card" style="border-left: 4px solid ${crisis.accentColor || '#ef4444'}">
+                <div class="step-card-icon" style="background: ${crisis.accentColor || '#ef4444'}20; color: ${crisis.accentColor || '#ef4444'}">
+                    <i class="${crisis.icon}"></i>
+                </div>
+                <div class="step-card-body">
+                    <h3 data-i18n="emergency_prep">Prepare to Execute</h3>
+                    <p>${crisis.problem || "Procedures are ready for this scenario."}</p>
+                    <div class="protocol-ready-badge">
+                        <i class="ph-bold ph-check-circle"></i> <span data-i18n="protocol_ready">Protocol is ready for deployment.</span>
+                    </div>
+                </div>
             </div>
-            <div class="step-card-body">
-                <h3>${currentStepIndex + 1}. ${step.title}</h3>
-                <p>${step.desc}</p>
+        `;
+    } else {
+        dom.stepsList.innerHTML = `
+            <div class="step-progress-dots">
+                ${dotsHtml}
             </div>
-        </div>
-    `;
+            <div class="step-card active" style="border-left: 4px solid ${typeClass === 'fire' ? '#ef4444' : typeClass === 'warning' ? '#f59e0b' : '#3b81f6'}">
+                <div class="step-card-icon ${typeClass}">
+                    <i class="${iconClass}"></i>
+                </div>
+                <div class="step-card-body">
+                    <h3>${currentStepIndex + 1}. ${step.title}</h3>
+                    <p>${step.desc}</p>
+                </div>
+            </div>
+        `;
+    }
 }
 
 // ── Text To Speech ──────────────────────────────────────
@@ -393,12 +419,24 @@ function initEvents() {
     
     if (dom.nextStepBtn) {
         dom.nextStepBtn.addEventListener('click', () => {
-            if (state.currentStep < state.activeCrisis.steps.length - 1) {
+            if (!state.protocolStarted) {
+                // START PROTOCOL
+                state.protocolStarted = true;
+                state.currentStep = 0;
+                logActivity(`Protocol confirmed: ${state.activeCrisis.title}`, 'ph-bold ph-lightning', 'info');
+                
+                updateUI();
+                // Always speak the first step when the protocol officially begins
+                if (window.voiceActivated) window.speakCurrentStep();
+            } else if (state.currentStep < state.activeCrisis.steps.length - 1) {
+                // NEXT STEP
                 state.currentStep++;
                 logActivity(`Step ${state.currentStep} completed`, 'ph-bold ph-check-circle', 'info');
                 updateUI();
+                // Speak subsequent steps on advancement
                 if (window.voiceActivated) window.speakCurrentStep();
             } else {
+                // COMPLETE
                 state.protocolCompleted = true;
                 logActivity('Emergency protocol completed', 'ph-bold ph-crown', 'info');
                 logHistory(`${state.activeCrisis.title} completed`, 'ph-bold ph-check-circle', 'success');
