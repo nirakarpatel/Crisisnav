@@ -78,12 +78,14 @@
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid var(--glass-border);
     border-radius: var(--radius);
-    padding: 24px;
+    padding: 28px; /* Increased horizontal and vertical padding for premium feel */
     margin-bottom: 24px;
     box-shadow: var(--shadow-soft);
     position: relative;
     overflow: hidden;
     transition: all 0.3s ease;
+    flex-shrink: 0; /* Prevent clipping/shrinking in flex containers */
+    height: auto;
 }
 
 .setting-card:hover {
@@ -92,12 +94,12 @@
 }
 
 .setting-card-title {
-    font-size: 0.85rem;
-    font-weight: 700;
+    font-size: 0.8rem; /* Slightly smaller and more refined */
+    font-weight: 800;
     color: var(--text-muted);
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin-bottom: 20px;
+    letter-spacing: 0.12em;
+    margin-bottom: 28px; /* More space before the first item */
     display: block;
 }
 
@@ -105,7 +107,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 18px 0;
+    padding: 20px 0; /* More vertical breath between items */
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
@@ -117,7 +119,7 @@
 .setting-info {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 20px !important; /* Forces the premium gap against global overrides */
 }
 
 .setting-icon-box {
@@ -1194,20 +1196,24 @@ body {
 .side-menu {
     position: fixed;
     top: 0;
-    left: -280px;
+    left: -320px; /* Increased offset to fully hide shadow/bleed */
     width: 280px;
     height: 100%;
     background: var(--white);
     z-index: 101;
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s, opacity 0.4s;
     padding: 32px 24px;
     box-shadow: 20px 0 50px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
+    visibility: hidden; /* Prevent sub-pixel rendering artifact */
+    opacity: 0;
 }
 
 .menu-open .side-menu {
-    transform: translateX(280px);
+    transform: translateX(320px); /* Adjusted to match negative left offset */
+    visibility: visible;
+    opacity: 1;
 }
 
 .menu-header {
@@ -1362,7 +1368,12 @@ body {
     :root { --radius: 20px; }
     body { background-size: 30px 30px; }
     .app-main { padding: 16px 16px 100px; }
-    .setting-card { padding: 16px; margin-bottom: 16px; }
+    .setting-card { 
+        padding: 24px; /* Lush mobile padding */
+        margin-bottom: 20px; 
+        flex-shrink: 0;
+        height: auto;
+    }
     .app-header { padding: 12px 16px; }
     .app-title { font-size: 1.1rem; }
     .app-nav { 

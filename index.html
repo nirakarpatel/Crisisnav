@@ -182,61 +182,63 @@
                 <button class="report-other-btn">Report Other Crisis</button>
             </section>
 
-            <!-- Active Steps Section -->
-            <section class="activity-section">
+            <!-- Active Steps Display -->
+            <section class="steps-section" id="steps-section">
                 <div class="section-header">
                     <div class="header-info">
-                        <div class="step-count-badge" style="background: var(--primary-blue); color: white; width:26px; height:26px;">5</div>
+                        <div class="step-count-badge">4</div>
                         <div class="header-text">
                             <h3>Active Protocol Progress</h3>
-                            <p id="current-step-mini" style="font-size: 0.8rem; font-weight: 600;">Step 1: Sound the alarm</p>
+                            <p id="current-step-mini">Step 1: Pull the Alarm</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="setting-card" id="active-protocol-card">
-                    <div class="setting-item" style="border-bottom: 1px solid rgba(0,0,0,0.05);">
-                        <div class="setting-info">
-                            <div class="setting-icon-box"><i class="ph-fill ph-fire"></i></div>
-                            <div class="setting-text">
-                                <h4>1 Sound the alarm & evacuate</h4>
-                                <p>Then call the fire department immediately.</p>
-                            </div>
-                        </div>
-                        <div class="step-check completed" style="background: #10b981; color: white; width:28px; height:28px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                            <i class="ph-bold ph-check" style="font-size: 14px;"></i>
+                <div class="steps-list" id="steps-list">
+                    <div class="step-card active" data-step="0">
+                        <div class="step-card-icon fire"><i class="ph-fill ph-fire"></i></div>
+                        <div class="step-card-body">
+                            <h3>Step 1: Sound the Alarm</h3>
+                            <p>Pull the nearest fire alarm and call the fire department immediately.</p>
                         </div>
                     </div>
+                    <div class="step-card" data-step="1">
+                        <div class="step-card-icon warning"><i class="ph-fill ph-warning-octagon"></i></div>
+                        <div class="step-card-body">
+                            <h3>Step 2: Close Gas Valves</h3>
+                            <p>If safe, isolate the fuel source to prevent further damage.</p>
+                        </div>
+                    </div>
+                    <div class="step-card" data-step="2">
+                        <div class="step-card-icon info"><i class="ph-fill ph-stairs"></i></div>
+                        <div class="step-card-body">
+                            <h3>Step 3: Use Emergency Stairs</h3>
+                            <p>Avoid all elevators during the alarm. Guide others to the exits.</p>
+                        </div>
+                    </div>
+                    <div class="step-card" data-step="3">
+                        <div class="step-card-icon" style="background: #dcfce7; color: #16a34a;"><i class="ph-fill ph-check-circle"></i></div>
+                        <div class="step-card-body">
+                            <h3>Step 4: Assembly Point</h3>
+                            <p>Gather at the designated assembly point and await headcount.</p>
+                        </div>
+                    </div>
+                </div>
 
-                    <div class="setting-item" style="border-bottom: 1px solid rgba(0,0,0,0.05);">
-                        <div class="setting-info">
-                            <div class="setting-icon-box" style="background: rgba(245, 158, 11, 0.1); color: var(--accident);"><i class="ph-fill ph-warning-octagon"></i></div>
-                            <div class="setting-text">
-                                <h4>2 Close the gas valves</h4>
-                                <p>If safe, isolate the fuel source.</p>
-                            </div>
-                        </div>
-                        <div style="width:24px; height:24px; border: 2px solid #cbd5e1; border-radius: 50%;"></div>
-                    </div>
-
-                    <div class="setting-item">
-                        <div class="setting-info">
-                            <div class="setting-icon-box" style="background: rgba(6, 182, 212, 0.1); color: var(--chemical);"><i class="ph-fill ph-stairs"></i></div>
-                            <div class="setting-text">
-                                <h4>3 Use the emergency stairs</h4>
-                                <p>Avoid all elevators during the alarm.</p>
-                            </div>
-                        </div>
-                        <div style="width:24px; height:24px; border: 2px solid #cbd5e1; border-radius: 50%;"></div>
-                    </div>
+                <div class="step-progress-dots" id="step-progress-dots">
+                    <div class="progress-dot active"></div>
+                    <div class="progress-dot"></div>
+                    <div class="progress-dot"></div>
+                    <div class="progress-dot"></div>
                 </div>
             </section>
 
-            <button class="next-step-btn" id="next-step-btn" style="margin-top: 20px;">
+            <button class="next-step-btn" id="next-step-btn">
                 <span>Next Step</span>
                 <i class="ph-bold ph-caret-right"></i>
-                <small id="next-step-hint">Collect personal protective documents (PPE)</small>
+                <small id="next-step-hint">Close Gas Valves</small>
             </button>
+
         </main>
 
         <!-- Bottom Tab Bar -->
@@ -330,5 +332,43 @@
 
     <!-- Scripts -->
     <script src="app.js"></script>
+    <script>
+        // Step Card Cycling Logic
+        (function() {
+            let currentStep = 0;
+            const cards = document.querySelectorAll('.step-card');
+            const dots = document.querySelectorAll('.progress-dot');
+            const btn = document.getElementById('next-step-btn');
+            const hint = document.getElementById('next-step-hint');
+            const mini = document.getElementById('current-step-mini');
+            const titles = ['Sound the Alarm', 'Close Gas Valves', 'Use Emergency Stairs', 'Assembly Point'];
+
+            if (!btn || cards.length === 0) return;
+
+            btn.addEventListener('click', function() {
+                // Exit current card
+                cards[currentStep].classList.remove('active');
+                cards[currentStep].classList.add('exit-left');
+                dots[currentStep].classList.remove('active');
+
+                // Move to next
+                currentStep = (currentStep + 1) % cards.length;
+
+                // Enter new card
+                cards[currentStep].classList.add('enter-right');
+                dots[currentStep].classList.add('active');
+
+                setTimeout(function() {
+                    cards.forEach(c => { c.classList.remove('exit-left', 'enter-right'); });
+                    cards[currentStep].classList.add('active');
+                }, 50);
+
+                // Update labels
+                mini.textContent = 'Step ' + (currentStep + 1) + ': ' + titles[currentStep];
+                const nextIdx = (currentStep + 1) % cards.length;
+                hint.textContent = titles[nextIdx];
+            });
+        })();
+    </script>
 </body>
 </html>
