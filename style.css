@@ -1518,4 +1518,36 @@ body {
 .offline-badge.online-back {
     background: #10b981;
     box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-}
+}
+
+/* -- Voice Visualizer -- */
+.voice-visualizer .bar {
+    width: 6px;
+    height: 10px;
+    background: var(--primary-blue);
+    border-radius: 10px;
+    transition: height 0.2s ease;
+}
+
+.voice-visualizer.animating .bar {
+    animation: voice-wave 1s infinite ease-in-out;
+}
+
+.voice-visualizer.animating .bar:nth-child(1) { animation-delay: 0.1s; }
+.voice-visualizer.animating .bar:nth-child(2) { animation-delay: 0.2s; }
+.voice-visualizer.animating .bar:nth-child(3) { animation-delay: 0.3s; }
+.voice-visualizer.animating .bar:nth-child(4) { animation-delay: 0.4s; }
+.voice-visualizer.animating .bar:nth-child(5) { animation-delay: 0.5s; }
+
+@keyframes voice-wave {
+    0%, 100% { height: 10px; }
+    50% { height: 40px; }
+}
+
+.mic-icon-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 4px solid rgba(255, 255, 255, 0.1);
+}
+

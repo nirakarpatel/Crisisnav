@@ -524,9 +524,6 @@ function initEvents() {
                         <button class="btn-primary" style="margin-top: 12px; font-size: 0.75rem; padding: 6px 12px; width: auto;" onclick="window.location.href='other-crises.html'">View Full Protocol</button>
                     </div>
                 `;
-            } else if (query.length > 5) {
-                aiResponseArea.style.display = 'block';
-                aiResponseArea.innerHTML = `<p style="font-size: 0.75rem; color: var(--text-muted); padding: 12px;">Searching knowledge base... (No direct match yet)</p>`;
             }
         });
     }
@@ -538,190 +535,180 @@ function initEvents() {
         }
     });
 
-    // Navigation Events
-    document.querySelectorAll('.app-nav .nav-item').forEach(navBtn => {
-        navBtn.addEventListener('click', (e) => {
-            const spanEl = navBtn.querySelector('span');
-            if (!spanEl) return;
-            
-            const i18nKey = spanEl.getAttribute('data-i18n');
-            const spanText = spanEl.textContent.trim();
-            
-            if (i18nKey === 'nav_home' || spanText === 'Home') window.location.href = 'index.html';
-            else if (i18nKey === 'nav_my_crisis' || spanText === 'My Crisis') window.location.href = 'my-crises.html';
-            else if (i18nKey === 'nav_reports' || spanText === 'Reports') window.location.href = 'reports.html';
-            else if (i18nKey === 'nav_settings' || spanText === 'Settings') window.location.href = 'settings.html';
-            // Also handle profile from bottom nav if clicked (for profile.html)
-            else if (i18nKey === 'nav_profile' || spanText === 'Profile') window.location.href = 'profile.html';
-        });
-    });
-
-    // Voice Modal Logic
+    // Voice Assistant Logic
     if (dom.voiceBtn) {
         dom.voiceBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            // Create modal if not exists
+            
+            // 1. Create/Get Voice Modal
             let voiceModal = document.getElementById('voice-listening-modal');
             if (!voiceModal) {
                 const modalHTML = `
                     <div id="voice-listening-modal" class="modal-overlay" style="z-index: 10000; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);">
-                        <div style="text-align: center; color: white;">
-                            <div class="mic-pulse-ring" style="width: 100px; height: 100px; background: rgba(59, 130, 246, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; animation: pulse-ring 1.5s infinite ease-out;">
-                                <div style="width: 60px; height: 60px; background: var(--primary-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);">
-                                    <i class="ph-fill ph-microphone"></i>
-                                </div>
+                        <div style="text-align: center; color: white; width: 90%; max-width: 400px;">
+                            <div class="voice-visualizer" id="voice-visualizer" style="display: flex; align-items: center; justify-content: center; gap: 4px; height: 60px; margin-bottom: 24px;">
+                                <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
                             </div>
-                            <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 8px;" data-i18n="mic_listening">Listening...</h2>
-                            <p style="font-size: 0.9rem; color: rgba(255,255,255,0.7);" data-i18n="mic_instruction">Speak your command clearly</p>
+                            <div class="mic-icon-circle" style="width: 80px; height: 80px; background: var(--primary-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 24px; box-shadow: 0 0 30px rgba(59, 130, 246, 0.4);">
+                                <i class="ph-fill ph-microphone"></i>
+                            </div>
+                            <h2 id="voice-status" style="font-size: 1.5rem; font-weight: 700; margin-bottom: 12px; font-family: var(--font-heading);">Listening...</h2>
+                            <p id="voice-transcript" style="font-size: 1rem; color: rgba(255,255,255,0.7); min-height: 1.5em; font-style: italic;"></p>
                         </div>
                     </div>
-                    <style>
-                        @keyframes pulse-ring {
-                            0% { transform: scale(0.8); opacity: 0.5; }
-                            100% { transform: scale(1.5); opacity: 0; }
-                        }
-                    </style>
                 `;
                 document.body.insertAdjacentHTML('beforeend', modalHTML);
                 voiceModal = document.getElementById('voice-listening-modal');
-                
-                // Re-apply translations if i18n is available
-                if (typeof applyTranslations === 'function') {
-                    applyTranslations();
-                } else {
-                    document.dispatchEvent(new Event('languageChanged'));
-                }
             }
+
+            const status = voiceModal.querySelector('#voice-status');
+            const transcriptDisplay = voiceModal.querySelector('#voice-transcript');
+            const visualizer = voiceModal.querySelector('#voice-visualizer');
             
-            // Initialize Real Speech Recognition
+            // 2. Initialize Speech Recognition
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SpeechRecognition) {
-                alert("Voice recognition is not supported in this browser.");
+                alert("Speech recognition not supported in this browser.");
                 return;
             }
-            
+
             const recognition = new SpeechRecognition();
             const currentLang = localStorage.getItem('crisisnav_lang') || 'en';
-            const localeMap = {
-                en: 'en-US', hi: 'hi-IN', bn: 'bn-IN', te: 'te-IN', mr: 'mr-IN',
-                ta: 'ta-IN', ur: 'ur-PK', gu: 'gu-IN', kn: 'kn-IN', ml: 'ml-IN',
-                or: 'or-IN', pa: 'pa-IN'
-            };
-            recognition.lang = localeMap[currentLang] || 'en-US';
-            recognition.continuous = false;
-            recognition.interimResults = true;
+            const localeMap = { en: 'en-US', hi: 'hi-IN', bn: 'bn-IN', ml: 'ml-IN', ta: 'ta-IN' };
             
+            recognition.lang = localeMap[currentLang] || 'en-US';
+            recognition.interimResults = true;
+            recognition.continuous = false;
+
+            // Verbal Feedback Helper
+            const speak = (text) => {
+                const msg = new SpeechSynthesisUtterance(text);
+                msg.lang = recognition.lang;
+                window.speechSynthesis.speak(msg);
+            };
+
             recognition.onstart = () => {
                 voiceModal.classList.add('active');
+                status.textContent = "Listening...";
+                visualizer.classList.add('animating');
             };
-            
+
             recognition.onresult = (event) => {
                 let interimTranscript = '';
                 let finalTranscript = '';
-
                 for (let i = event.resultIndex; i < event.results.length; ++i) {
-                    if (event.results[i].isFinal) {
-                        finalTranscript += event.results[i][0].transcript;
-                    } else {
-                        interimTranscript += event.results[i][0].transcript;
-                    }
+                    if (event.results[i].isFinal) finalTranscript += event.results[i][0].transcript;
+                    else interimTranscript += event.results[i][0].transcript;
                 }
-
                 const transcript = (finalTranscript || interimTranscript).toLowerCase().trim();
-                const heading = voiceModal.querySelector('h2');
-                const origText = "Listening...";
-                
-                if (transcript) {
-                    heading.textContent = `"${transcript}"`;
-                }
+                transcriptDisplay.textContent = transcript;
 
-                if (!finalTranscript) return; // Wait for final result before matching
+                if (!finalTranscript) return;
+
+                // 3. Command Matcher
+                handleCommand(transcript);
+            };
+
+            const handleCommand = (cmd) => {
+                visualizer.classList.remove('animating');
                 
-                voiceModal.querySelector('.mic-pulse-ring').style.animation = 'none';
-                
-                // Comprehensive Multi-category Keywords
-                const keywordMap = {
-                    fire: ['fire', 'आग', 'ag', 'আগুন', 'ti', 'തീ', 'ಬೆಂ', 'ନିଆଁ', 'ਅੱਗ', 'জুই', 'आगि', 'अग्नि', 'آگ', 'burning', 'smoke', 'fire in'],
-                    accident: ['accident', 'दुर्घटना', 'crash', 'collision', 'ప్రమాదం', 'अपघात', 'విబத்து', 'حادثہ', 'અકસ્માત', 'അපകടം', 'દુର୍ଘଟଣା', 'ਹਾਦਸਾ', 'accident'],
-                    medical: ['medical', 'hospital', 'doctor', 'heart', 'चिकित्सा', 'వైద్యకీయ', 'तबीबी', 'ವೈದ್ಯಕೀಯ', 'മെഡിക്കൽ', 'मदद', 'help', 'emergency'],
-                    chemical: ['chemical', 'leak', 'gas', 'gas leak', 'poison', 'রাসায়নিক', 'ലിക്', 'ಸೋರಿಕೆ', 'toxic']
+                // Crisis Keywords
+                const crisisMap = {
+                    fire: ['fire', 'smoke', 'burning', 'आग'],
+                    accident: ['accident', 'crash', 'collision', 'दुर्घटना'],
+                    medical: ['medical', 'hospital', 'doctor', 'patient', 'चिकित्सा'],
+                    chemical: ['chemical', 'leak', 'poison', 'gas']
                 };
 
-                let matchedCrisis = null;
-                for (const [crisisId, words] of Object.entries(keywordMap)) {
-                    if (words.some(word => transcript.includes(word))) {
-                        matchedCrisis = crisisId;
-                        break;
+                // Navigation Keywords
+                const navMap = {
+                    'index.html': ['home', 'dashboard', 'मुख्य'],
+                    'my-crises.html': ['my crisis', 'incidents', 'मेरी रिपोर्ट'],
+                    'reports.html': ['reports', 'analytics', 'रिपोर्ट্স'],
+                    'settings.html': ['settings', 'options', 'सेटिंग्स'],
+                    'profile.html': ['profile', 'user', 'account', 'प्रोफ़ाइल']
+                };
+
+                // Protocol Control
+                const controlKeywords = {
+                    next: ['next', 'continue', 'forward', 'अगला'],
+                    start: ['start', 'begin', 'deploy', 'शुरू'],
+                    complete: ['complete', 'finish', 'done', 'पूर्ण']
+                };
+
+                // MATCHING LOGIC
+                
+                // A. Check Crisis
+                for (const [id, keywords] of Object.entries(crisisMap)) {
+                    if (keywords.some(k => cmd.includes(k))) {
+                        status.textContent = `Starting ${id} protocol...`;
+                        speak(`Starting ${id} protocol.`);
+                        setTimeout(() => {
+                            voiceModal.classList.remove('active');
+                            if (window.location.pathname.includes('index.html')) startCrisis(id);
+                            else window.location.href = `index.html?crisis=${id}&voice=true`;
+                        }, 1000);
+                        return;
                     }
                 }
-                
-                if (matchedCrisis) {
-                    voiceModal.querySelector('.mic-pulse-ring > div').style.background = '#10b981';
-                    voiceModal.querySelector('.mic-pulse-ring > div').style.boxShadow = '0 0 20px rgba(16, 185, 129, 0.5)';
-                    
-                    setTimeout(() => {
-                        voiceModal.classList.remove('active');
-                        // Restore state
+
+                // B. Check Navigation
+                for (const [page, keywords] of Object.entries(navMap)) {
+                    if (keywords.some(k => cmd.includes(k))) {
+                        status.textContent = `Navigating to ${page.split('.')[0]}...`;
+                        speak(`Navigating to ${page.split('.')[0]}.`);
                         setTimeout(() => {
-                            heading.textContent = origText;
-                            voiceModal.querySelector('.mic-pulse-ring').style.animation = 'pulse-ring 1.5s infinite ease-out';
-                            voiceModal.querySelector('.mic-pulse-ring > div').style.background = 'var(--primary-blue)';
-                            voiceModal.querySelector('.mic-pulse-ring > div').style.boxShadow = '0 0 20px rgba(59, 130, 246, 0.5)';
-                        }, 300);
-                        
-                        // Action: Enable vocal UI globally and start the detected crisis
-                        window.voiceActivated = true;
-                        if (window.location.pathname.includes('index.html') || window.location.pathname.endsWith('/')) {
-                            startCrisis(matchedCrisis);
-                        } else {
-                            window.location.href = `index.html?crisis=${matchedCrisis}&voice=true`;
-                        }
-                    }, 1200);
-                } else {
-                    heading.textContent = "Command not recognized";
-                    voiceModal.querySelector('.mic-pulse-ring > div').style.background = '#ef4444';
-                    voiceModal.querySelector('.mic-pulse-ring > div').style.boxShadow = '0 0 20px rgba(239, 68, 68, 0.5)';
-                    setTimeout(() => {
-                        voiceModal.classList.remove('active');
-                        // Restore state
-                        setTimeout(() => {
-                            heading.textContent = origText;
-                            voiceModal.querySelector('.mic-pulse-ring').style.animation = 'pulse-ring 1.5s infinite ease-out';
-                            voiceModal.querySelector('.mic-pulse-ring > div').style.background = 'var(--primary-blue)';
-                            voiceModal.querySelector('.mic-pulse-ring > div').style.boxShadow = '0 0 20px rgba(59, 130, 246, 0.5)';
-                        }, 300);
-                    }, 1500);
-                }
-            };
-            
-            recognition.onerror = (event) => {
-                console.error("Speech Recognition Error:", event.error);
-                const heading = voiceModal.querySelector('h2');
-                const origText = "Listening...";
-                
-                if (event.error === 'no-speech') {
-                    heading.textContent = "No voice detected";
-                } else if (event.error === 'not-allowed') {
-                    heading.textContent = "Mic access denied";
-                } else {
-                    heading.textContent = "Try again...";
+                            window.location.href = page;
+                        }, 1000);
+                        return;
+                    }
                 }
 
-                setTimeout(() => {
-                    voiceModal.classList.remove('active');
-                    setTimeout(() => { heading.textContent = origText; }, 300);
-                }, 1500);
+                // C. Check Protocol Control
+                if (state.activeCrisis) {
+                    if (controlKeywords.next.some(k => cmd.includes(k))) {
+                        status.textContent = "Moving to next step...";
+                        speak("Next step.");
+                        setTimeout(() => {
+                            voiceModal.classList.remove('active');
+                            dom.nextStepBtn.click();
+                        }, 800);
+                        return;
+                    }
+                    if (controlKeywords.complete.some(k => cmd.includes(k))) {
+                        status.textContent = "Completing protocol...";
+                        speak("Protocol complete.");
+                        setTimeout(() => {
+                            voiceModal.classList.remove('active');
+                            dom.nextStepBtn.click();
+                        }, 800);
+                        return;
+                    }
+                }
+
+                // No match
+                status.textContent = "Not recognized";
+                speak("I didn't catch that.");
+                setTimeout(() => voiceModal.classList.remove('active'), 1500);
             };
-            
+
+            recognition.onerror = (err) => {
+                console.error("Speech Recognition Error:", err.error);
+                status.textContent = "Error occurred";
+                setTimeout(() => voiceModal.classList.remove('active'), 1500);
+            };
+
             recognition.onend = () => {
-                if (voiceModal.classList.contains('active') && voiceModal.querySelector('h2').textContent === "Listening...") {
+                if (voiceModal.classList.contains('active') && status.textContent === "Listening...") {
                     voiceModal.classList.remove('active');
+                    visualizer.classList.remove('animating');
                 }
             };
             
             recognition.start();
         });
     }
+
 
     // Sidebar Tour Trigger
     const btnTutorial = document.getElementById('btn-start-tutorial');
