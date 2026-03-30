@@ -2,7 +2,7 @@
   "name": "CrisisNav: Mission Control",
   "short_name": "CrisisNav",
   "description": "High-speed crisis navigation and emergency response system.",
-  "start_url": "/index.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#3b82f6",

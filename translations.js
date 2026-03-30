@@ -24,7 +24,9 @@ const translations = {
         settings_title: "Settings",
         lang_preference: "Language Preference",
         mic_listening: "Listening...",
-        mic_instruction: "Speak your command clearly"
+        mic_instruction: "Speak your command clearly",
+        offline_mode: "Offline - Cached Mode",
+        online_back: "Back Online"
     },
     hi: {
         nav_home: "होम",
@@ -51,7 +53,9 @@ const translations = {
         settings_title: "सेटिंग्स",
         lang_preference: "भाषा प्राथमिकता",
         mic_listening: "सुन रहा हूँ...",
-        mic_instruction: "अपना आदेश स्पष्ट रूप से बोलें"
+        mic_instruction: "अपना आदेश स्पष्ट रूप से बोलें",
+        offline_mode: "ऑफ़लाइन - कैश्ड मोड",
+        online_back: "वापस ऑनलाइन"
     },
     bn: {
         nav_home: "হোম",

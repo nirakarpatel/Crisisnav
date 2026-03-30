@@ -100,6 +100,7 @@ async function init() {
     initTheme();
     loadGlobalProfile();
     checkOnboardingGuide();
+    initOfflineStatus();
 }
 
 // ── Menu Management ────────────────────────────────────────
@@ -145,6 +146,45 @@ function toggleTheme() {
     
     if (dom.themeToggle) {
         dom.themeToggle.classList.toggle('on');
+    }
+}
+
+// ── Offline Status Management ──────────────────────────────
+function initOfflineStatus() {
+    // Create the offline badge if it doesn't exist
+    let offlineBadge = document.getElementById('offline-status-badge');
+    if (!offlineBadge) {
+        offlineBadge = document.createElement('div');
+        offlineBadge.id = 'offline-status-badge';
+        offlineBadge.className = 'offline-badge';
+        offlineBadge.innerHTML = '<i class="ph-bold ph-wifi-slash"></i> <span data-i18n="offline_mode">Offline - Cached Mode</span>';
+        document.body.appendChild(offlineBadge);
+    }
+
+    const updateStatus = () => {
+        if (navigator.onLine) {
+            if (offlineBadge.classList.contains('visible')) {
+                offlineBadge.innerHTML = '<i class="ph-bold ph-wifi-high"></i> <span data-i18n="online_back">Back Online</span>';
+                offlineBadge.classList.add('online-back');
+                setTimeout(() => {
+                    offlineBadge.classList.remove('visible');
+                    setTimeout(() => {
+                        offlineBadge.classList.remove('online-back');
+                        offlineBadge.innerHTML = '<i class="ph-bold ph-wifi-slash"></i> <span data-i18n="offline_mode">Offline - Cached Mode</span>';
+                    }, 500);
+                }, 2000);
+            }
+        } else {
+            offlineBadge.classList.add('visible');
+        }
+    };
+
+    window.addEventListener('online', updateStatus);
+    window.addEventListener('offline', updateStatus);
+    
+    // Initial check
+    if (!navigator.onLine) {
+        updateStatus();
     }
 }
 
